@@ -24,6 +24,9 @@
     <string name="field_required">Väli on kohustuslik</string>
 
     <!-- Admin Panel -->
+    <string name="drinks">Joogid</string>
+    <string name="templates">Mallid</string>
+    <string name="gallery">Galerii</string>
     <string name="manage_drinks">Halda jooke</string>
     <string name="manage_folders">Halda kaustu</string>
     <string name="manage_templates">Halda malle</string>
@@ -36,6 +39,9 @@
     <string name="add_drink">Lisa jook</string>
     <string name="edit_drink">Muuda jooki</string>
     <string name="delete_drink">Kustuta jook</string>
+    <string name="search">Otsi...</string>
+    <string name="description">Koostisosad</string>
+    <string name="currency_format">%.2f €</string>
 
     <!-- Templates -->
     <string name="template_name">Malli nimi</string>
