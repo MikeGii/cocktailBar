@@ -6,7 +6,7 @@ import android.view.View
 import android.view.Window
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.cocktailbar.ImagePickerAdapter
+import com.example.cocktailbar.ui.common.ImagePickerAdapter
 import com.example.cocktailbar.R
 import com.example.cocktailbar.SupabaseClient
 import com.example.cocktailbar.databinding.DialogImagePickerBinding

@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
