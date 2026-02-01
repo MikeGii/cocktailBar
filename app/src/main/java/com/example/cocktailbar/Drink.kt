@@ -21,17 +21,44 @@ data class Drink(
     @Transient
     var variants: List<DrinkVariant> = emptyList()
 ) {
-    // Helper to get display price (first variant or range)
-    fun getDisplayPrice(): String {
-        if (variants.isEmpty()) return "0.00 €"
-        if (variants.size == 1) return String.format("%.2f €", variants[0].price)
 
-        val minPrice = variants.minOf { it.price }
-        val maxPrice = variants.maxOf { it.price }
+    // Helper to get display price for lists (with decimals)
+    fun getDisplayPrice(): String {
+        if (variants.isEmpty()) return "0€"
+        if (variants.size == 1) return formatPrice(variants[0].price)
+
+        val prices = variants.sortedBy { it.price }
+        val minPrice = prices.first().price
+        val maxPrice = prices.last().price
         return if (minPrice == maxPrice) {
-            String.format("%.2f €", minPrice)
+            formatPrice(minPrice)
         } else {
-            String.format("%.2f - %.2f €", minPrice, maxPrice)
+            "${formatPrice(minPrice)} - ${formatPrice(maxPrice)}"
+        }
+    }
+
+    // Helper to get compact price for template display (e.g., "7€/14€")
+    fun getTemplatePrice(): String {
+        if (variants.isEmpty()) return "0€"
+        if (variants.size == 1) return formatPriceCompact(variants[0].price)
+
+        val prices = variants.sortedBy { it.price }.map { formatPriceCompact(it.price) }
+        return prices.joinToString("/")
+    }
+
+    private fun formatPrice(price: Double): String {
+        return if (price == price.toLong().toDouble()) {
+            "${price.toLong()}€"
+        } else {
+            String.format("%.2f€", price)
+        }
+    }
+
+    private fun formatPriceCompact(price: Double): String {
+        return if (price == price.toLong().toDouble()) {
+            "${price.toLong()}€"
+        } else {
+            String.format("%.1f€", price).replace(".0€", "€")
         }
     }
 }

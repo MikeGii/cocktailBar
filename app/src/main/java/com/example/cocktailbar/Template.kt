@@ -44,10 +44,21 @@ data class Template(
     val drinksWidth: Float = 0.8f,
     @SerialName("drinks_height")
     val drinksHeight: Float = 0.65f,
-    @SerialName("drinks_font_size")
-    val drinksFontSize: Float = 16f,
-    @SerialName("drinks_columns")
-    val drinksColumns: Int = 1,
+    @SerialName("drinks_name_font_size")
+    val drinksNameFontSize: Float = 18f,
+    @SerialName("drinks_price_font_size")
+    val drinksPriceFontSize: Float = 16f,
+    @SerialName("drinks_description_font_size")
+    val drinksDescriptionFontSize: Float = 12f,
+    @SerialName("drinks_name_color")
+    val drinksNameColor: String = "#FFFFFF",
+    @SerialName("drinks_price_color")
+    val drinksPriceColor: String = "#FFFFFF",
+    @SerialName("drinks_description_color")
+    val drinksDescriptionColor: String = "#CCCCCC",
+    @SerialName("drinks_font")
+    val drinksFont: String = "default",
+
 
     @SerialName("created_at")
     val createdAt: String? = null,
@@ -85,10 +96,20 @@ data class TemplateRequest(
     val drinksWidth: Float = 0.8f,
     @SerialName("drinks_height")
     val drinksHeight: Float = 0.65f,
-    @SerialName("drinks_font_size")
-    val drinksFontSize: Float = 16f,
-    @SerialName("drinks_columns")
-    val drinksColumns: Int = 1
+    @SerialName("drinks_name_font_size")
+    val drinksNameFontSize: Float = 18f,
+    @SerialName("drinks_price_font_size")
+    val drinksPriceFontSize: Float = 16f,
+    @SerialName("drinks_description_font_size")
+    val drinksDescriptionFontSize: Float = 12f,
+    @SerialName("drinks_name_color")
+    val drinksNameColor: String = "#FFFFFF",
+    @SerialName("drinks_price_color")
+    val drinksPriceColor: String = "#FFFFFF",
+    @SerialName("drinks_description_color")
+    val drinksDescriptionColor: String = "#CCCCCC",
+    @SerialName("drinks_font")
+    val drinksFont: String = "default"
 )
 
 @Serializable

@@ -1,15 +1,20 @@
 package com.example.cocktailbar
 
 import android.app.Dialog
-import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +24,6 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.example.cocktailbar.databinding.ActivityTemplateVisualEditorBinding
-import com.example.cocktailbar.databinding.DialogDrinksSettingsBinding
 import com.example.cocktailbar.databinding.DialogImagePickerBinding
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.storage.storage
@@ -67,6 +71,19 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
 
         binding.previewView.onLayoutChanged = {
             // Layout changed, can update UI if needed
+        }
+
+        setPreviewAspectRatio()
+    }
+
+    private fun setPreviewAspectRatio() {
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        (binding.previewCard.layoutParams as? ConstraintLayout.LayoutParams)?.let {
+            it.dimensionRatio = "W,$screenWidth:$screenHeight"
+            binding.previewCard.layoutParams = it
         }
     }
 
@@ -191,8 +208,12 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
                             drinksY = template.drinksY
                             drinksWidth = template.drinksWidth
                             drinksHeight = template.drinksHeight
-                            drinksFontSize = template.drinksFontSize
-                            drinksColumns = template.drinksColumns
+                            drinksNameFontSize = template.drinksNameFontSize
+                            drinksPriceFontSize = template.drinksPriceFontSize
+                            drinksDescriptionFontSize = template.drinksDescriptionFontSize
+                            drinksNameColor = Color.parseColor(template.drinksNameColor)
+                            drinksPriceColor = Color.parseColor(template.drinksPriceColor)
+                            drinksDescriptionColor = Color.parseColor(template.drinksDescriptionColor)
                         }
 
                         // Load images
@@ -371,41 +392,113 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
     private fun showDrinksSettingsDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        val dialogBinding = DialogDrinksSettingsBinding.inflate(layoutInflater)
-        dialog.setContentView(dialogBinding.root)
+        dialog.setContentView(R.layout.dialog_drinks_settings)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
+        val seekbarNameFontSize = dialog.findViewById<SeekBar>(R.id.seekbarNameFontSize)
+        val tvNameFontSizeValue = dialog.findViewById<TextView>(R.id.tvNameFontSizeValue)
+        val nameColorContainer = dialog.findViewById<LinearLayout>(R.id.nameColorContainer)
+
+        val seekbarPriceFontSize = dialog.findViewById<SeekBar>(R.id.seekbarPriceFontSize)
+        val tvPriceFontSizeValue = dialog.findViewById<TextView>(R.id.tvPriceFontSizeValue)
+        val priceColorContainer = dialog.findViewById<LinearLayout>(R.id.priceColorContainer)
+
+        val seekbarDescFontSize = dialog.findViewById<SeekBar>(R.id.seekbarDescFontSize)
+        val tvDescFontSizeValue = dialog.findViewById<TextView>(R.id.tvDescFontSizeValue)
+        val descColorContainer = dialog.findViewById<LinearLayout>(R.id.descColorContainer)
+
+        val btnClose = dialog.findViewById<Button>(R.id.btnClose)
+
+        // Available colors
+        val colors = listOf(
+            "#FFFFFF", "#000000", "#FF6B35", "#FFA366",
+            "#CCCCCC", "#888888", "#FFD700", "#90EE90"
+        )
+
         // Set current values
-        dialogBinding.seekbarFontSize.progress = (binding.previewView.drinksFontSize - 10).toInt()
-        dialogBinding.tvFontSizeValue.text = "${binding.previewView.drinksFontSize.toInt()}sp"
+        seekbarNameFontSize.progress = (binding.previewView.drinksNameFontSize - 10).toInt()
+        tvNameFontSizeValue.text = "${binding.previewView.drinksNameFontSize.toInt()}sp"
 
-        dialogBinding.seekbarColumns.progress = binding.previewView.drinksColumns - 1
-        dialogBinding.tvColumnsValue.text = "${binding.previewView.drinksColumns}"
+        seekbarPriceFontSize.progress = (binding.previewView.drinksPriceFontSize - 10).toInt()
+        tvPriceFontSizeValue.text = "${binding.previewView.drinksPriceFontSize.toInt()}sp"
 
-        dialogBinding.seekbarFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seekbarDescFontSize.progress = (binding.previewView.drinksDescriptionFontSize - 10).toInt()
+        tvDescFontSizeValue.text = "${binding.previewView.drinksDescriptionFontSize.toInt()}sp"
+
+        // Setup color buttons
+        fun setupColorButtons(container: LinearLayout, currentColor: Int, onColorSelected: (Int) -> Unit) {
+            container.removeAllViews()
+            colors.forEach { colorHex ->
+                val color = Color.parseColor(colorHex)
+                val button = View(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(40.dp, 40.dp).apply {
+                        marginEnd = 8.dp
+                    }
+                    background = createColorButtonBackground(color, color == currentColor)
+                    setOnClickListener {
+                        onColorSelected(color)
+                        // Update selection state
+                        for (i in 0 until container.childCount) {
+                            val child = container.getChildAt(i)
+                            val childColor = Color.parseColor(colors[i])
+                            child.background = createColorButtonBackground(childColor, childColor == color)
+                        }
+                    }
+                }
+                container.addView(button)
+            }
+        }
+
+        setupColorButtons(nameColorContainer, binding.previewView.drinksNameColor) { color ->
+            binding.previewView.drinksNameColor = color
+            binding.previewView.invalidate()
+        }
+
+        setupColorButtons(priceColorContainer, binding.previewView.drinksPriceColor) { color ->
+            binding.previewView.drinksPriceColor = color
+            binding.previewView.invalidate()
+        }
+
+        setupColorButtons(descColorContainer, binding.previewView.drinksDescriptionColor) { color ->
+            binding.previewView.drinksDescriptionColor = color
+            binding.previewView.invalidate()
+        }
+
+        // Font size listeners
+        seekbarNameFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val fontSize = progress + 10f
-                dialogBinding.tvFontSizeValue.text = "${fontSize.toInt()}sp"
-                binding.previewView.drinksFontSize = fontSize
+                tvNameFontSizeValue.text = "${fontSize.toInt()}sp"
+                binding.previewView.drinksNameFontSize = fontSize
                 binding.previewView.invalidate()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        dialogBinding.seekbarColumns.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seekbarPriceFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val columns = progress + 1
-                dialogBinding.tvColumnsValue.text = "$columns"
-                binding.previewView.drinksColumns = columns
+                val fontSize = progress + 10f
+                tvPriceFontSizeValue.text = "${fontSize.toInt()}sp"
+                binding.previewView.drinksPriceFontSize = fontSize
                 binding.previewView.invalidate()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        dialogBinding.btnClose.setOnClickListener { dialog.dismiss() }
+        seekbarDescFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val fontSize = progress + 10f
+                tvDescFontSizeValue.text = "${fontSize.toInt()}sp"
+                binding.previewView.drinksDescriptionFontSize = fontSize
+                binding.previewView.invalidate()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        btnClose.setOnClickListener { dialog.dismiss() }
 
         dialog.show()
 
@@ -416,6 +509,22 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
             window.setLayout(width, android.view.WindowManager.LayoutParams.WRAP_CONTENT)
         }
     }
+
+    private fun createColorButtonBackground(color: Int, isSelected: Boolean): GradientDrawable {
+        val drawable = GradientDrawable()
+        drawable.shape = GradientDrawable.RECTANGLE
+        drawable.cornerRadius = 8f
+        drawable.setColor(color)
+        if (isSelected) {
+            drawable.setStroke(4, getColor(R.color.orange_primary))
+        } else {
+            drawable.setStroke(2, Color.GRAY)
+        }
+        return drawable
+    }
+
+    private val Int.dp: Int
+        get() = (this * resources.displayMetrics.density).toInt()
 
     private fun saveTemplate() {
         val name = binding.etTemplateName.text.toString().trim()
@@ -450,8 +559,12 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
                     drinksY = preview.drinksY,
                     drinksWidth = preview.drinksWidth,
                     drinksHeight = preview.drinksHeight,
-                    drinksFontSize = preview.drinksFontSize,
-                    drinksColumns = preview.drinksColumns
+                    drinksNameFontSize = preview.drinksNameFontSize,
+                    drinksPriceFontSize = preview.drinksPriceFontSize,
+                    drinksDescriptionFontSize = preview.drinksDescriptionFontSize,
+                    drinksNameColor = String.format("#%06X", 0xFFFFFF and preview.drinksNameColor),
+                    drinksPriceColor = String.format("#%06X", 0xFFFFFF and preview.drinksPriceColor),
+                    drinksDescriptionColor = String.format("#%06X", 0xFFFFFF and preview.drinksDescriptionColor)
                 )
 
                 val savedTemplateId: String

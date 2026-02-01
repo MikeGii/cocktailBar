@@ -42,6 +42,13 @@
     <string name="search">Otsi...</string>
     <string name="description">Koostisosad</string>
     <string name="currency_format">%.2f €</string>
+    <string name="name_font_size">Nime fondi suurus</string>
+    <string name="price_font_size">Hinna fondi suurus</string>
+    <string name="description_font_size">Kirjelduse fondi suurus</string>
+    <string name="name_color">Nime värv</string>
+    <string name="price_color">Hinna värv</string>
+    <string name="description_color">Kirjelduse värv</string>
+    <string name="font_style">Font</string>
 
     <!-- Variants -->
     <string name="prices">Hinnad</string>

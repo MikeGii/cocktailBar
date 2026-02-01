@@ -1,8 +1,10 @@
 package com.example.cocktailbar
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cocktailbar.databinding.ItemTemplateSelectBinding
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +19,18 @@ class TemplateSelectAdapter(
 
     inner class TemplateViewHolder(private val binding: ItemTemplateSelectBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            // Set aspect ratio to match device screen
+            val displayMetrics = binding.root.context.resources.displayMetrics
+            val screenWidth = displayMetrics.widthPixels
+            val screenHeight = displayMetrics.heightPixels
+
+            (binding.previewView.layoutParams as? ConstraintLayout.LayoutParams)?.let {
+                it.dimensionRatio = "W,$screenWidth:$screenHeight"
+                binding.previewView.layoutParams = it
+            }
+        }
 
         fun bind(template: Template) {
             binding.tvTemplateName.text = template.name
@@ -37,8 +51,12 @@ class TemplateSelectAdapter(
                 drinksY = template.drinksY
                 drinksWidth = template.drinksWidth
                 drinksHeight = template.drinksHeight
-                drinksFontSize = template.drinksFontSize
-                drinksColumns = template.drinksColumns
+                drinksNameFontSize = template.drinksNameFontSize
+                drinksPriceFontSize = template.drinksPriceFontSize
+                drinksDescriptionFontSize = template.drinksDescriptionFontSize
+                drinksNameColor = Color.parseColor(template.drinksNameColor)
+                drinksPriceColor = Color.parseColor(template.drinksPriceColor)
+                drinksDescriptionColor = Color.parseColor(template.drinksDescriptionColor)
                 drinks = template.drinks
                 editMode = TemplatePreviewView.EditMode.NONE
 

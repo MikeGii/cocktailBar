@@ -6,8 +6,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import kotlin.math.max
-import kotlin.math.min
+import android.graphics.Typeface
+
 
 class TemplatePreviewView @JvmOverloads constructor(
     context: Context,
@@ -44,8 +44,21 @@ class TemplatePreviewView @JvmOverloads constructor(
     var drinksY: Float = 0.25f
     var drinksWidth: Float = 0.8f
     var drinksHeight: Float = 0.65f
-    var drinksFontSize: Float = 16f
-    var drinksColumns: Int = 1
+
+    // Drinks text customization
+    var drinksNameFontSize: Float = 18f
+    var drinksPriceFontSize: Float = 16f
+    var drinksDescriptionFontSize: Float = 12f
+    var drinksNameColor: Int = Color.WHITE
+    var drinksPriceColor: Int = Color.WHITE
+    var drinksDescriptionColor: Int = Color.parseColor("#CCCCCC")
+    var drinksFont: String = "default"
+        set(value) {
+            field = value
+            updateTypeface()
+        }
+
+    private var currentTypeface: Typeface = Typeface.DEFAULT
 
     // Drinks data
     var drinks: List<Drink> = emptyList()
@@ -79,6 +92,7 @@ class TemplatePreviewView @JvmOverloads constructor(
         textAlign = Paint.Align.LEFT
         isAntiAlias = true
         setShadowLayer(4f, 2f, 2f, Color.BLACK)
+        typeface = Typeface.DEFAULT
     }
 
     private val drinkPricePaint = Paint().apply {
@@ -86,6 +100,15 @@ class TemplatePreviewView @JvmOverloads constructor(
         textAlign = Paint.Align.RIGHT
         isAntiAlias = true
         setShadowLayer(4f, 2f, 2f, Color.BLACK)
+        typeface = Typeface.DEFAULT
+    }
+
+    private val drinkDescriptionPaint = Paint().apply {
+        color = Color.parseColor("#CCCCCC")
+        textAlign = Paint.Align.LEFT
+        isAntiAlias = true
+        setShadowLayer(3f, 1f, 1f, Color.BLACK)
+        typeface = Typeface.DEFAULT
     }
 
     private val handlePaint = Paint().apply {
@@ -141,6 +164,21 @@ class TemplatePreviewView @JvmOverloads constructor(
             EditMode.DRINKS -> drawDrinksHandles(canvas)
             else -> {}
         }
+    }
+
+    private fun updateTypeface() {
+        currentTypeface = when (drinksFont) {
+            "serif" -> Typeface.SERIF
+            "sans-serif" -> Typeface.SANS_SERIF
+            "monospace" -> Typeface.MONOSPACE
+            "cursive" -> Typeface.create("cursive", Typeface.NORMAL)
+            "casual" -> Typeface.create("casual", Typeface.NORMAL)
+            else -> Typeface.DEFAULT
+        }
+        drinkNamePaint.typeface = currentTypeface
+        drinkPricePaint.typeface = currentTypeface
+        drinkDescriptionPaint.typeface = currentTypeface
+        invalidate()
     }
 
     private fun drawBackground(canvas: Canvas) {
@@ -231,35 +269,59 @@ class TemplatePreviewView @JvmOverloads constructor(
 
         val areaWidth = right - left
         val areaHeight = bottom - top
-        val columnWidth = areaWidth / drinksColumns
 
-        // Scale font size relative to canvas height for consistency
-        val scaledFontSize = drinksFontSize * (height / 800f) * resources.displayMetrics.density
-        val padding = 16f * (height / 800f)
+        // Scale based on view width for consistent appearance
+        val scaleFactor = width / 400f
+        val padding = 16f * scaleFactor
 
-        drinkNamePaint.textSize = scaledFontSize
-        drinkPricePaint.textSize = scaledFontSize
+        // Apply colors
+        drinkNamePaint.color = drinksNameColor
+        drinkPricePaint.color = drinksPriceColor
+        drinkDescriptionPaint.color = drinksDescriptionColor
 
-        val lineHeight = scaledFontSize * 1.5f
-        val maxLinesPerColumn = ((areaHeight - padding * 2) / lineHeight).toInt()
+        // Scale font sizes
+        val nameSize = drinksNameFontSize * scaleFactor
+        val priceSize = drinksPriceFontSize * scaleFactor
+        val descSize = drinksDescriptionFontSize * scaleFactor
 
-        var drinkIndex = 0
-        for (col in 0 until drinksColumns) {
-            val colLeft = left + col * columnWidth + padding
-            val colRight = left + (col + 1) * columnWidth - padding
-            var y = top + padding + scaledFontSize
+        drinkNamePaint.textSize = nameSize
+        drinkPricePaint.textSize = priceSize
+        drinkDescriptionPaint.textSize = descSize
 
-            for (line in 0 until maxLinesPerColumn) {
-                if (drinkIndex >= drinks.size) break
+        val itemSpacing = 8f * scaleFactor
+        var y = top + padding + nameSize
 
-                val drink = drinks[drinkIndex]
-                canvas.drawText(drink.name, colLeft, y, drinkNamePaint)
-                canvas.drawText(drink.getDisplayPrice(), colRight, y, drinkPricePaint)
+        for (drink in drinks) {
+            // Check if we have space for this drink
+            val itemHeight = nameSize + (if (drink.description.isNullOrEmpty()) 0f else descSize + 4f * scaleFactor)
+            if (y + itemHeight > bottom - padding) break
 
-                y += lineHeight
-                drinkIndex++
+            // Draw drink name on left
+            canvas.drawText(drink.name, left + padding, y, drinkNamePaint)
+
+            // Draw price on right
+            canvas.drawText(drink.getTemplatePrice(), right - padding, y, drinkPricePaint)
+
+            // Draw description if available
+            if (!drink.description.isNullOrEmpty()) {
+                y += descSize + 4f * scaleFactor
+                val maxDescWidth = areaWidth - padding * 2
+                val truncatedDesc = truncateText(drink.description, drinkDescriptionPaint, maxDescWidth)
+                canvas.drawText(truncatedDesc, left + padding, y, drinkDescriptionPaint)
             }
+
+            y += nameSize + itemSpacing
         }
+    }
+
+    private fun truncateText(text: String, paint: Paint, maxWidth: Float): String {
+        if (paint.measureText(text) <= maxWidth) return text
+
+        var truncated = text
+        while (truncated.isNotEmpty() && paint.measureText("$truncated...") > maxWidth) {
+            truncated = truncated.dropLast(1)
+        }
+        return "$truncated..."
     }
 
     private fun drawLogoHandles(canvas: Canvas) {
@@ -297,8 +359,12 @@ class TemplatePreviewView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        // In NONE mode, just detect taps and pass through
+        // In NONE mode, only handle if we have a tap callback
         if (editMode == EditMode.NONE) {
+            // If no tap handler, let parent handle the touch (for list clicks)
+            if (onTapInViewMode == null) {
+                return false
+            }
             if (event.actionMasked == MotionEvent.ACTION_UP) {
                 onTapInViewMode?.invoke()
             }

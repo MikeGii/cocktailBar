@@ -17,6 +17,7 @@ import coil.request.SuccessResult
 import com.example.cocktailbar.databinding.ActivityTemplateDisplayBinding
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
+import android.graphics.Color
 
 class TemplateDisplayActivity : AppCompatActivity() {
 
@@ -253,8 +254,12 @@ class TemplateDisplayActivity : AppCompatActivity() {
                 drinksY = tmpl.drinksY
                 drinksWidth = tmpl.drinksWidth
                 drinksHeight = tmpl.drinksHeight
-                drinksFontSize = tmpl.drinksFontSize
-                drinksColumns = tmpl.drinksColumns
+                drinksNameFontSize = tmpl.drinksNameFontSize
+                drinksPriceFontSize = tmpl.drinksPriceFontSize
+                drinksDescriptionFontSize = tmpl.drinksDescriptionFontSize
+                drinksNameColor = Color.parseColor(tmpl.drinksNameColor)
+                drinksPriceColor = Color.parseColor(tmpl.drinksPriceColor)
+                drinksDescriptionColor = Color.parseColor(tmpl.drinksDescriptionColor)
                 drinks = tmpl.drinks
                 editMode = TemplatePreviewView.EditMode.NONE
             }
