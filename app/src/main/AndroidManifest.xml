@@ -44,6 +44,15 @@
             android:name=".TemplateVisualEditorActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".TemplateSelectActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TemplateDisplayActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CocktailBar.Fullscreen" />
+
     </application>
 
 </manifest>

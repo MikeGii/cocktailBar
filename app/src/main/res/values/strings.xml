@@ -88,13 +88,14 @@
     <string name="logo">Logo</string>
     <string name="background">Taust</string>
 
+    <!-- Template Display -->
+    <string name="lock_screen">Lukusta ekraan</string>
+    <string name="unlock">Ava lukustus</string>
+    <string name="screen_locked">Ekraan lukustatud. Vajuta 3x avamiseks.</string>
+
     <!-- Folders -->
     <string name="folder_name">Kausta nimi</string>
     <string name="add_folder">Lisa kaust</string>
-
-    <!-- Lock Screen -->
-    <string name="unlock">Ava lukustus</string>
-    <string name="screen_locked">Ekraan lukustatud</string>
 
     <!-- General -->
     <string name="yes">Jah</string>

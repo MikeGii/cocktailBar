@@ -182,10 +182,10 @@
             <Button
                 android:id="@+id/btnSelectBackground"
                 style="@style/Widget.CocktailBar.Button.Secondary"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="44dp"
-                android:paddingHorizontal="@dimen/spacing_lg"
                 android:text="@string/select_background"
+                android:textColor="@color/orange_primary"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -203,13 +203,14 @@
             <Button
                 android:id="@+id/btnSelectLogo"
                 style="@style/Widget.CocktailBar.Button.Secondary"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="44dp"
-                android:paddingHorizontal="@dimen/spacing_lg"
                 android:text="@string/select_logo"
+                android:textColor="@color/orange_primary"
                 android:textSize="14sp" />
 
         </LinearLayout>
+
 
         <!-- Drinks Controls -->
         <LinearLayout

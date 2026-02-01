@@ -29,10 +29,10 @@ class TemplatePreviewView @JvmOverloads constructor(
     private var backgroundBitmap: Bitmap? = null
     private var logoBitmap: Bitmap? = null
 
-    // Background transform
+    // Background transform (relative values 0-1, where 0.5 = centered)
     var backgroundScale: Float = 1f
-    var backgroundOffsetX: Float = 0f
-    var backgroundOffsetY: Float = 0f
+    var backgroundOffsetX: Float = 0.5f  // 0.5 = centered
+    var backgroundOffsetY: Float = 0.5f  // 0.5 = centered
 
     // Logo transform (0-1 relative positions)
     var logoX: Float = 0.5f
@@ -111,6 +111,7 @@ class TemplatePreviewView @JvmOverloads constructor(
     private val scaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
 
     var onLayoutChanged: (() -> Unit)? = null
+    var onTapInViewMode: (() -> Unit)? = null
 
     fun setBackgroundBitmap(bitmap: Bitmap?) {
         backgroundBitmap = bitmap
@@ -147,11 +148,45 @@ class TemplatePreviewView @JvmOverloads constructor(
             val canvasWidth = width.toFloat()
             val canvasHeight = height.toFloat()
 
-            val scaledWidth = bitmap.width * backgroundScale
-            val scaledHeight = bitmap.height * backgroundScale
+            // Calculate scaled dimensions to cover the canvas
+            val bitmapAspect = bitmap.width.toFloat() / bitmap.height
+            val canvasAspect = canvasWidth / canvasHeight
 
-            val left = (canvasWidth - scaledWidth) / 2 + backgroundOffsetX
-            val top = (canvasHeight - scaledHeight) / 2 + backgroundOffsetY
+            val baseWidth: Float
+            val baseHeight: Float
+
+            if (bitmapAspect > canvasAspect) {
+                // Bitmap is wider - fit to height
+                baseHeight = canvasHeight
+                baseWidth = canvasHeight * bitmapAspect
+            } else {
+                // Bitmap is taller - fit to width
+                baseWidth = canvasWidth
+                baseHeight = canvasWidth / bitmapAspect
+            }
+
+            val scaledWidth = baseWidth * backgroundScale
+            val scaledHeight = baseHeight * backgroundScale
+
+            // Calculate offset range (how much we can pan)
+            val maxOffsetX = (scaledWidth - canvasWidth) / 2
+            val maxOffsetY = (scaledHeight - canvasHeight) / 2
+
+            // Convert relative offset (0-1) to absolute pixels
+            // 0.5 = centered, 0 = shifted left/up max, 1 = shifted right/down max
+            val absoluteOffsetX = if (maxOffsetX > 0) {
+                (backgroundOffsetX - 0.5f) * 2 * maxOffsetX
+            } else {
+                0f
+            }
+            val absoluteOffsetY = if (maxOffsetY > 0) {
+                (backgroundOffsetY - 0.5f) * 2 * maxOffsetY
+            } else {
+                0f
+            }
+
+            val left = (canvasWidth - scaledWidth) / 2 + absoluteOffsetX
+            val top = (canvasHeight - scaledHeight) / 2 + absoluteOffsetY
 
             val destRect = RectF(left, top, left + scaledWidth, top + scaledHeight)
             canvas.drawBitmap(bitmap, null, destRect, null)
@@ -197,19 +232,22 @@ class TemplatePreviewView @JvmOverloads constructor(
         val areaWidth = right - left
         val areaHeight = bottom - top
         val columnWidth = areaWidth / drinksColumns
-        val padding = 16f
 
-        drinkNamePaint.textSize = drinksFontSize * resources.displayMetrics.density
-        drinkPricePaint.textSize = drinksFontSize * resources.displayMetrics.density
+        // Scale font size relative to canvas height for consistency
+        val scaledFontSize = drinksFontSize * (height / 800f) * resources.displayMetrics.density
+        val padding = 16f * (height / 800f)
 
-        val lineHeight = drinkNamePaint.textSize * 1.5f
+        drinkNamePaint.textSize = scaledFontSize
+        drinkPricePaint.textSize = scaledFontSize
+
+        val lineHeight = scaledFontSize * 1.5f
         val maxLinesPerColumn = ((areaHeight - padding * 2) / lineHeight).toInt()
 
         var drinkIndex = 0
         for (col in 0 until drinksColumns) {
             val colLeft = left + col * columnWidth + padding
             val colRight = left + (col + 1) * columnWidth - padding
-            var y = top + padding + drinkNamePaint.textSize
+            var y = top + padding + scaledFontSize
 
             for (line in 0 until maxLinesPerColumn) {
                 if (drinkIndex >= drinks.size) break
@@ -259,6 +297,14 @@ class TemplatePreviewView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        // In NONE mode, just detect taps and pass through
+        if (editMode == EditMode.NONE) {
+            if (event.actionMasked == MotionEvent.ACTION_UP) {
+                onTapInViewMode?.invoke()
+            }
+            return true
+        }
+
         scaleGestureDetector.onTouchEvent(event)
 
         when (event.actionMasked) {
@@ -288,8 +334,41 @@ class TemplatePreviewView @JvmOverloads constructor(
 
                 when (editMode) {
                     EditMode.BACKGROUND -> {
-                        backgroundOffsetX += dx
-                        backgroundOffsetY += dy
+                        // Convert pixel movement to relative offset change
+                        backgroundBitmap?.let { bitmap ->
+                            val canvasWidth = width.toFloat()
+                            val canvasHeight = height.toFloat()
+
+                            val bitmapAspect = bitmap.width.toFloat() / bitmap.height
+                            val canvasAspect = canvasWidth / canvasHeight
+
+                            val baseWidth: Float
+                            val baseHeight: Float
+
+                            if (bitmapAspect > canvasAspect) {
+                                baseHeight = canvasHeight
+                                baseWidth = canvasHeight * bitmapAspect
+                            } else {
+                                baseWidth = canvasWidth
+                                baseHeight = canvasWidth / bitmapAspect
+                            }
+
+                            val scaledWidth = baseWidth * backgroundScale
+                            val scaledHeight = baseHeight * backgroundScale
+
+                            val maxOffsetX = (scaledWidth - canvasWidth) / 2
+                            val maxOffsetY = (scaledHeight - canvasHeight) / 2
+
+                            // Convert pixel drag to relative change
+                            if (maxOffsetX > 0) {
+                                val relativeChangeX = dx / (2 * maxOffsetX)
+                                backgroundOffsetX = (backgroundOffsetX + relativeChangeX).coerceIn(0f, 1f)
+                            }
+                            if (maxOffsetY > 0) {
+                                val relativeChangeY = dy / (2 * maxOffsetY)
+                                backgroundOffsetY = (backgroundOffsetY + relativeChangeY).coerceIn(0f, 1f)
+                            }
+                        }
                         onLayoutChanged?.invoke()
                     }
                     EditMode.LOGO -> {
@@ -393,7 +472,7 @@ class TemplatePreviewView @JvmOverloads constructor(
             when (editMode) {
                 EditMode.BACKGROUND -> {
                     backgroundScale *= detector.scaleFactor
-                    backgroundScale = backgroundScale.coerceIn(0.5f, 3f)
+                    backgroundScale = backgroundScale.coerceIn(1f, 3f)  // Min 1.0 to always cover
                 }
                 EditMode.LOGO -> {
                     logoScale *= detector.scaleFactor

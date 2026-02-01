@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupButtons() {
         // Worker buttons
         binding.btnSelectTemplate.setOnClickListener {
-            Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, TemplateSelectActivity::class.java))
         }
 
         binding.btnSyncData.setOnClickListener {
