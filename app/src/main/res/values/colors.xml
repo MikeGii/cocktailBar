@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <!-- Primary Colors -->
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <!-- App Theme Colors -->
+    <color name="background_primary">#FFFFFFFF</color>
+    <color name="background_secondary">#FFF5F5F5</color>
+
+    <!-- Orange Accent -->
+    <color name="orange_primary">#FFFF6B35</color>
+    <color name="orange_light">#FFFFA366</color>
+    <color name="orange_dark">#FFE55A2B</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#FF1A1A1A</color>
+    <color name="text_secondary">#FF666666</color>
+    <color name="text_on_orange">#FFFFFFFF</color>
+
+    <!-- Border/Divider -->
+    <color name="border_light">#FFE0E0E0</color>
+    <color name="border_orange">#FFFF6B35</color>
 </resources>

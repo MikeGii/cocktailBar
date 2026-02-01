@@ -1,3 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">CocktailBar</string>
+
+    <!-- Home Screen -->
+    <string name="select_template">Vali mall</string>
+    <string name="sync_data">Sünkroniseeri</string>
+    <string name="admin_login">Logi sisse</string>
+
+    <!-- Messages -->
+    <string name="syncing">Sünkroniseerin...</string>
+    <string name="sync_success">Sünkroniseerimine õnnestus!</string>
+    <string name="sync_failed">Sünkroniseerimine ebaõnnestus</string>
+    <string name="coming_soon">Tulekul!</string>
+
+    <!-- Admin -->
+    <string name="username">Kasutajanimi</string>
+    <string name="password">Parool</string>
+    <string name="login">Logi sisse</string>
+    <string name="logout">Logi välja</string>
+    <string name="login_failed">Sisselogimine ebaõnnestus</string>
+    <string name="login_success">Sisselogimine õnnestus!</string>
+    <string name="field_required">Väli on kohustuslik</string>
+
+    <!-- Admin Panel -->
+    <string name="manage_drinks">Halda jooke</string>
+    <string name="manage_folders">Halda kaustu</string>
+    <string name="manage_templates">Halda malle</string>
+    <string name="manage_backgrounds">Halda taustapilte</string>
+    <string name="manage_logos">Halda logosid</string>
+
+    <!-- Drinks -->
+    <string name="drink_name">Joogi nimi</string>
+    <string name="drink_price">Hind</string>
+    <string name="add_drink">Lisa jook</string>
+    <string name="edit_drink">Muuda jooki</string>
+    <string name="delete_drink">Kustuta jook</string>
+
+    <!-- Templates -->
+    <string name="template_name">Malli nimi</string>
+    <string name="select_background">Vali taustapilt</string>
+    <string name="select_logo">Vali logo</string>
+    <string name="select_drinks">Vali joogid</string>
+    <string name="save">Salvesta</string>
+    <string name="cancel">Tühista</string>
+    <string name="delete">Kustuta</string>
+    <string name="edit">Muuda</string>
+
+    <!-- Folders -->
+    <string name="folder_name">Kausta nimi</string>
+    <string name="add_folder">Lisa kaust</string>
+
+    <!-- Lock Screen -->
+    <string name="unlock">Ava lukustus</string>
+    <string name="screen_locked">Ekraan lukustatud</string>
+
+    <!-- General -->
+    <string name="yes">Jah</string>
+    <string name="no">Ei</string>
+    <string name="ok">OK</string>
+    <string name="error">Viga</string>
+    <string name="loading">Laadimine...</string>
+    <string name="no_data">Andmed puuduvad</string>
+    <string name="confirm_delete">Kas oled kindel, et soovid kustutada?</string>
 </resources>

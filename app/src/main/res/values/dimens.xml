@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Button -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_width">280dp</dimen>
+    <dimen name="button_corner_radius">12dp</dimen>
+
+    <!-- Icon Button -->
+    <dimen name="icon_button_size">48dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+
+    <!-- Logo -->
+    <dimen name="logo_max_height">120dp</dimen>
+</resources>
