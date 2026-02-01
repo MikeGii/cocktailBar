@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.cocktailbar.GalleryActivity
+import com.example.cocktailbar.ui.gallery.GalleryViewModel
 import com.example.cocktailbar.R
 import com.example.cocktailbar.SupabaseClient
 import com.example.cocktailbar.TemplatePreviewView
@@ -95,14 +95,14 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
         }
 
         binding.btnSelectBackground.setOnClickListener {
-            imagePickerDialog.show(GalleryActivity.BUCKET_BACKGROUNDS) { url ->
+            imagePickerDialog.show(GalleryViewModel.BUCKET_BACKGROUNDS) { url ->
                 selectedBackgroundUrl = url
                 loadBackgroundImage(url)
             }
         }
 
         binding.btnSelectLogo.setOnClickListener {
-            imagePickerDialog.show(GalleryActivity.BUCKET_LOGOS) { url ->
+            imagePickerDialog.show(GalleryViewModel.BUCKET_LOGOS) { url ->
                 selectedLogoUrl = url
                 loadLogoImage(url)
             }

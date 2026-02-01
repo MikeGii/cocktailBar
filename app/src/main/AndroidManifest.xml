@@ -24,17 +24,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Drinks (already moved) -->
+        <!-- Drinks -->
         <activity
             android:name=".ui.drinks.DrinksActivity"
             android:exported="false" />
 
-        <!-- Gallery (not moved yet - stays in root) -->
+        <!-- Gallery -->
         <activity
-            android:name=".GalleryActivity"
+            android:name=".ui.gallery.GalleryActivity"
             android:exported="false" />
 
-        <!-- Templates (moved) -->
+        <!-- Templates -->
         <activity
             android:name=".ui.templates.TemplatesActivity"
             android:exported="false" />

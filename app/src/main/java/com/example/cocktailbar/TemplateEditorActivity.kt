@@ -22,6 +22,7 @@ import com.example.cocktailbar.data.model.TemplateDrinkRequest
 import com.example.cocktailbar.data.model.TemplateRequest
 import com.example.cocktailbar.databinding.ActivityTemplateEditorBinding
 import com.example.cocktailbar.databinding.DialogImagePickerBinding
+import com.example.cocktailbar.ui.gallery.GalleryViewModel
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.launch
@@ -65,14 +66,14 @@ class TemplateEditorActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         binding.cardBackground.setOnClickListener {
-            showImagePickerDialog(GalleryActivity.BUCKET_BACKGROUNDS) { url ->
+            showImagePickerDialog(GalleryViewModel.BUCKET_BACKGROUNDS) { url ->
                 selectedBackgroundUrl = url
                 updateBackgroundPreview()
             }
         }
 
         binding.cardLogo.setOnClickListener {
-            showImagePickerDialog(GalleryActivity.BUCKET_LOGOS) { url ->
+            showImagePickerDialog(GalleryViewModel.BUCKET_LOGOS) { url ->
                 selectedLogoUrl = url
                 updateLogoPreview()
             }
@@ -205,7 +206,7 @@ class TemplateEditorActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogBinding.tvTitle.text = getString(
-            if (bucket == GalleryActivity.BUCKET_BACKGROUNDS) R.string.select_background
+            if (bucket == GalleryViewModel.BUCKET_BACKGROUNDS) R.string.select_background
             else R.string.select_logo
         )
 
