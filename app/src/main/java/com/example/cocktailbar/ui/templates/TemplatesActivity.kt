@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.templates
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -6,21 +6,27 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cocktailbar.R
 import com.example.cocktailbar.data.model.Template
 import com.example.cocktailbar.databinding.ActivityTemplatesBinding
-import io.github.jan.supabase.postgrest.from
+import com.example.cocktailbar.ui.common.UiState
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class TemplatesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTemplatesBinding
     private lateinit var adapter: TemplatesAdapter
-    private var templates: MutableList<Template> = mutableListOf()
+
+    private val viewModel: TemplatesViewModel by viewModels { TemplatesViewModel.Factory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,16 +43,17 @@ class TemplatesActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupButtons()
+        observeViewModel()
     }
 
     override fun onResume() {
         super.onResume()
-        loadTemplates()
+        viewModel.loadTemplates()
     }
 
     private fun setupRecyclerView() {
         adapter = TemplatesAdapter(
-            templates = templates,
+            templates = emptyList(),
             onEditClick = { template -> openTemplateEditor(template) },
             onDeleteClick = { template -> showDeleteConfirmation(template) },
             onPreviewClick = { template -> openTemplatePreview(template) }
@@ -57,36 +64,38 @@ class TemplatesActivity : AppCompatActivity() {
 
     private fun setupButtons() {
         binding.btnBack.setOnClickListener { finish() }
-
-        binding.fabAdd.setOnClickListener {
-            openTemplateEditor(null)
-        }
+        binding.fabAdd.setOnClickListener { openTemplateEditor(null) }
     }
 
-    private fun loadTemplates() {
-        showLoading(true)
-
+    private fun observeViewModel() {
         lifecycleScope.launch {
-            try {
-                val result = SupabaseClient.client
-                    .from("templates")
-                    .select()
-                    .decodeList<Template>()
-
-                templates.clear()
-                templates.addAll(result)
-
-                runOnUiThread {
-                    adapter.updateTemplates(templates)
-                    showLoading(false)
-                    updateEmptyState()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is UiState.Loading -> showLoading(true)
+                            is UiState.Success -> {
+                                showLoading(false)
+                                adapter.updateTemplates(state.data)
+                                updateEmptyState(false)
+                            }
+                            is UiState.Empty -> {
+                                showLoading(false)
+                                adapter.updateTemplates(emptyList())
+                                updateEmptyState(true)
+                            }
+                            is UiState.Error -> {
+                                showLoading(false)
+                                Toast.makeText(this@TemplatesActivity, state.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    showLoading(false)
-                    updateEmptyState()
-                    Toast.makeText(this@TemplatesActivity, R.string.error, Toast.LENGTH_SHORT).show()
+
+                launch {
+                    viewModel.toastMessage.collectLatest { messageResId ->
+                        Toast.makeText(this@TemplatesActivity, messageResId, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -101,42 +110,18 @@ class TemplatesActivity : AppCompatActivity() {
     }
 
     private fun openTemplatePreview(template: Template) {
-        // TODO: Implement preview activity
-        Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, TemplateDisplayActivity::class.java)
+        intent.putExtra(TemplateDisplayActivity.EXTRA_TEMPLATE_ID, template.id)
+        startActivity(intent)
     }
 
     private fun showDeleteConfirmation(template: Template) {
         AlertDialog.Builder(this)
             .setTitle(R.string.delete_template)
             .setMessage(R.string.confirm_delete)
-            .setPositiveButton(R.string.yes) { _, _ -> deleteTemplate(template) }
+            .setPositiveButton(R.string.yes) { _, _ -> viewModel.deleteTemplate(template) }
             .setNegativeButton(R.string.no, null)
             .show()
-    }
-
-    private fun deleteTemplate(template: Template) {
-        showLoading(true)
-
-        lifecycleScope.launch {
-            try {
-                SupabaseClient.client
-                    .from("templates")
-                    .delete {
-                        filter { eq("id", template.id) }
-                    }
-
-                runOnUiThread {
-                    Toast.makeText(this@TemplatesActivity, R.string.delete, Toast.LENGTH_SHORT).show()
-                    loadTemplates()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    showLoading(false)
-                    Toast.makeText(this@TemplatesActivity, R.string.error, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
 
     private fun showLoading(show: Boolean) {
@@ -144,8 +129,7 @@ class TemplatesActivity : AppCompatActivity() {
         binding.rvTemplates.visibility = if (show) View.GONE else View.VISIBLE
     }
 
-    private fun updateEmptyState() {
-        val isEmpty = adapter.itemCount == 0
+    private fun updateEmptyState(isEmpty: Boolean) {
         binding.tvEmpty.visibility = if (isEmpty && binding.progressBar.visibility != View.VISIBLE)
             View.VISIBLE else View.GONE
     }

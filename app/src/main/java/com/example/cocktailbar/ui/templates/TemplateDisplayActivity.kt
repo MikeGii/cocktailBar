@@ -1,5 +1,6 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.templates
 
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -14,14 +15,16 @@ import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.example.cocktailbar.databinding.ActivityTemplateDisplayBinding
-import io.github.jan.supabase.postgrest.from
-import kotlinx.coroutines.launch
-import android.graphics.Color
+import com.example.cocktailbar.R
+import com.example.cocktailbar.SupabaseClient
+import com.example.cocktailbar.TemplatePreviewView
 import com.example.cocktailbar.data.model.Drink
 import com.example.cocktailbar.data.model.DrinkVariant
 import com.example.cocktailbar.data.model.Template
 import com.example.cocktailbar.data.model.TemplateDrink
+import com.example.cocktailbar.databinding.ActivityTemplateDisplayBinding
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.launch
 
 class TemplateDisplayActivity : AppCompatActivity() {
 
@@ -34,7 +37,7 @@ class TemplateDisplayActivity : AppCompatActivity() {
     // Triple tap detection
     private var tapCount = 0
     private var lastTapTime = 0L
-    private val tapTimeout = 500L // ms between taps
+    private val tapTimeout = 500L
     private val handler = Handler(Looper.getMainLooper())
 
     // Auto-hide unlock button
@@ -74,7 +77,6 @@ class TemplateDisplayActivity : AppCompatActivity() {
             unlockScreen()
         }
 
-        // Triple tap detection on the preview
         binding.previewView.onTapInViewMode = {
             if (isLocked) {
                 detectTripleTap()
@@ -107,7 +109,6 @@ class TemplateDisplayActivity : AppCompatActivity() {
             .setDuration(200)
             .start()
 
-        // Auto-hide after 3 seconds
         handler.removeCallbacks(hideUnlockRunnable)
         handler.postDelayed(hideUnlockRunnable, 3000)
     }
@@ -115,12 +116,10 @@ class TemplateDisplayActivity : AppCompatActivity() {
     private fun lockScreen() {
         isLocked = true
 
-        // Hide UI elements
         binding.topBar.visibility = View.GONE
         binding.btnLock.visibility = View.GONE
         binding.btnUnlock.visibility = View.GONE
 
-        // Enter fullscreen immersive mode
         enterFullscreen()
 
         Toast.makeText(this, R.string.screen_locked, Toast.LENGTH_SHORT).show()
@@ -129,12 +128,10 @@ class TemplateDisplayActivity : AppCompatActivity() {
     private fun unlockScreen() {
         isLocked = false
 
-        // Show UI elements
         binding.topBar.visibility = View.VISIBLE
         binding.btnLock.visibility = View.VISIBLE
         binding.btnUnlock.visibility = View.GONE
 
-        // Exit fullscreen
         exitFullscreen()
 
         handler.removeCallbacks(hideUnlockRunnable)
@@ -177,25 +174,18 @@ class TemplateDisplayActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Load template
                 val loadedTemplate = SupabaseClient.client
                     .from("templates")
-                    .select {
-                        filter { eq("id", templateId!!) }
-                    }
+                    .select { filter { eq("id", templateId!!) } }
                     .decodeSingle<Template>()
 
-                // Load template drinks
                 val templateDrinks = SupabaseClient.client
                     .from("template_drinks")
-                    .select {
-                        filter { eq("template_id", templateId!!) }
-                    }
+                    .select { filter { eq("template_id", templateId!!) } }
                     .decodeList<TemplateDrink>()
 
                 val drinkIds = templateDrinks.map { it.drinkId }
 
-                // Load drinks
                 val drinks = if (drinkIds.isNotEmpty()) {
                     val drinksResult = SupabaseClient.client
                         .from("drinks")
@@ -246,7 +236,6 @@ class TemplateDisplayActivity : AppCompatActivity() {
         template?.let { tmpl ->
             binding.tvTitle.text = tmpl.name
 
-            // Set preview view properties
             binding.previewView.apply {
                 backgroundScale = tmpl.backgroundScale
                 backgroundOffsetX = tmpl.backgroundOffsetX
@@ -264,12 +253,11 @@ class TemplateDisplayActivity : AppCompatActivity() {
                 drinksNameColor = Color.parseColor(tmpl.drinksNameColor)
                 drinksPriceColor = Color.parseColor(tmpl.drinksPriceColor)
                 drinksDescriptionColor = Color.parseColor(tmpl.drinksDescriptionColor)
-                drinksFont = tmpl.drinksFont  // Add this line
+                drinksFont = tmpl.drinksFont
                 drinks = tmpl.drinks
                 editMode = TemplatePreviewView.EditMode.NONE
             }
 
-            // Load images
             tmpl.backgroundUrl?.let { loadBackgroundImage(it) }
             tmpl.logoUrl?.let { loadLogoImage(it) }
         }
@@ -321,9 +309,9 @@ class TemplateDisplayActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (isLocked) {
-            // Do nothing when locked
             return
         }
         super.onBackPressed()

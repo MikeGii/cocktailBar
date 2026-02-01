@@ -1,10 +1,11 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.templates
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.example.cocktailbar.R
 import com.example.cocktailbar.data.model.Template
 import com.example.cocktailbar.databinding.ItemTemplateBinding
 

@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.templates
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cocktailbar.TemplatePreviewView
 import com.example.cocktailbar.data.model.Template
 import com.example.cocktailbar.databinding.ItemTemplateSelectBinding
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +23,6 @@ class TemplateSelectAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            // Set aspect ratio to match device screen
             val displayMetrics = binding.root.context.resources.displayMetrics
             val screenWidth = displayMetrics.widthPixels
             val screenHeight = displayMetrics.heightPixels
@@ -36,12 +36,9 @@ class TemplateSelectAdapter(
         fun bind(template: Template) {
             binding.tvTemplateName.text = template.name
 
-            // Reset views
             binding.previewView.setBackgroundBitmap(null)
             binding.previewView.setLogoBitmap(null)
 
-            // Apply template settings to preview view
-            // Apply template settings to preview view
             binding.previewView.apply {
                 backgroundScale = template.backgroundScale
                 backgroundOffsetX = template.backgroundOffsetX
@@ -59,15 +56,12 @@ class TemplateSelectAdapter(
                 drinksNameColor = Color.parseColor(template.drinksNameColor)
                 drinksPriceColor = Color.parseColor(template.drinksPriceColor)
                 drinksDescriptionColor = Color.parseColor(template.drinksDescriptionColor)
-                drinksFont = template.drinksFont  // Add this line
+                drinksFont = template.drinksFont
                 drinks = template.drinks
                 editMode = TemplatePreviewView.EditMode.NONE
-
-                // Disable touch in list view
                 onTapInViewMode = null
             }
 
-            // Load background
             template.backgroundUrl?.let { url ->
                 coroutineScope.launch {
                     val bitmap = imageLoader(url)
@@ -75,7 +69,6 @@ class TemplateSelectAdapter(
                 }
             }
 
-            // Load logo
             template.logoUrl?.let { url ->
                 coroutineScope.launch {
                     val bitmap = imageLoader(url)

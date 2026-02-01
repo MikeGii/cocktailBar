@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.templates
 
 import android.graphics.Color
 import android.os.Bundle
@@ -10,6 +10,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.cocktailbar.GalleryActivity
+import com.example.cocktailbar.R
+import com.example.cocktailbar.SupabaseClient
+import com.example.cocktailbar.TemplatePreviewView
 import com.example.cocktailbar.data.model.Drink
 import com.example.cocktailbar.data.model.DrinkVariant
 import com.example.cocktailbar.data.model.Template
@@ -297,10 +301,7 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
             drinksDescriptionFontSize = preview.drinksDescriptionFontSize,
             drinksNameColor = String.format("#%06X", 0xFFFFFF and preview.drinksNameColor),
             drinksPriceColor = String.format("#%06X", 0xFFFFFF and preview.drinksPriceColor),
-            drinksDescriptionColor = String.format(
-                "#%06X",
-                0xFFFFFF and preview.drinksDescriptionColor
-            ),
+            drinksDescriptionColor = String.format("#%06X", 0xFFFFFF and preview.drinksDescriptionColor),
             drinksFont = preview.drinksFont
         )
 

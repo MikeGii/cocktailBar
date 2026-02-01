@@ -23,6 +23,9 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 import android.content.Intent
 import com.example.cocktailbar.data.model.Admin
+import com.example.cocktailbar.ui.drinks.DrinksActivity
+import com.example.cocktailbar.ui.templates.TemplatesActivity
+import com.example.cocktailbar.ui.templates.TemplateSelectActivity
 
 class MainActivity : AppCompatActivity() {
 

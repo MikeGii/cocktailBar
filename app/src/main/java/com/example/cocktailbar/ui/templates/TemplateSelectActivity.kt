@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.templates
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.example.cocktailbar.R
+import com.example.cocktailbar.SupabaseClient
 import com.example.cocktailbar.data.model.Drink
 import com.example.cocktailbar.data.model.DrinkVariant
 import com.example.cocktailbar.data.model.Template
@@ -63,7 +65,6 @@ class TemplateSelectActivity : AppCompatActivity() {
     }
 
     private suspend fun loadImage(url: String): Bitmap? {
-        // Check cache first
         imageCache[url]?.let { return it }
 
         return withContext(Dispatchers.IO) {
@@ -77,7 +78,6 @@ class TemplateSelectActivity : AppCompatActivity() {
                 val result = (loader.execute(request) as? SuccessResult)?.drawable
                 val bitmap = (result as? BitmapDrawable)?.bitmap
 
-                // Cache the result
                 imageCache[url] = bitmap
                 bitmap
             } catch (e: Exception) {
@@ -96,44 +96,36 @@ class TemplateSelectActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Load all templates
                 val templatesResult = SupabaseClient.client
                     .from("templates")
                     .select()
                     .decodeList<Template>()
 
-                // Load all template_drinks
                 val allTemplateDrinks = SupabaseClient.client
                     .from("template_drinks")
                     .select()
                     .decodeList<TemplateDrink>()
 
-                // Load all drinks
                 val allDrinks = SupabaseClient.client
                     .from("drinks")
                     .select()
                     .decodeList<Drink>()
 
-                // Load all variants
                 val allVariants = SupabaseClient.client
                     .from("drink_variants")
                     .select()
                     .decodeList<DrinkVariant>()
 
-                // Group variants by drink
                 val variantsByDrink = allVariants.groupBy { it.drinkId }
 
-                // Create drinks with variants
                 val drinksWithVariants = allDrinks.map { drink ->
                     drink.copy().apply {
                         variants = variantsByDrink[drink.id]?.sortedBy { it.sortOrder ?: 0 } ?: emptyList()
                     }
                 }
 
-                // Group template_drinks by template
                 val drinksByTemplate = allTemplateDrinks.groupBy { it.templateId }
 
-                // Assign drinks to templates
                 val templatesWithDrinks = templatesResult
                     .filter { it.isActive }
                     .map { template ->

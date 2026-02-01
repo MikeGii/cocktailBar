@@ -24,32 +24,31 @@
             </intent-filter>
         </activity>
 
+        <!-- Drinks (already moved) -->
         <activity
             android:name=".ui.drinks.DrinksActivity"
             android:exported="false" />
 
+        <!-- Gallery (not moved yet - stays in root) -->
         <activity
             android:name=".GalleryActivity"
             android:exported="false" />
 
+        <!-- Templates (moved) -->
         <activity
-            android:name=".TemplatesActivity"
+            android:name=".ui.templates.TemplatesActivity"
             android:exported="false" />
 
         <activity
-            android:name=".TemplateEditorActivity"
+            android:name=".ui.templates.TemplateVisualEditorActivity"
             android:exported="false" />
 
         <activity
-            android:name=".TemplateVisualEditorActivity"
+            android:name=".ui.templates.TemplateSelectActivity"
             android:exported="false" />
 
         <activity
-            android:name=".TemplateSelectActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".TemplateDisplayActivity"
+            android:name=".ui.templates.TemplateDisplayActivity"
             android:exported="false"
             android:theme="@style/Theme.CocktailBar.Fullscreen" />
 
