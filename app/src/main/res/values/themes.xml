@@ -10,6 +10,13 @@
         <item name="android:windowBackground">@color/background_primary</item>
     </style>
 
+    <!-- Splash Screen Theme -->
+    <style name="Theme.CocktailBar.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/orange_primary</item>
+        <item name="android:navigationBarColor">@color/orange_primary</item>
+    </style>
+
     <!-- Primary Button Style (Orange filled) -->
     <style name="Widget.CocktailBar.Button.Primary" parent="Widget.Material3.Button">
         <item name="android:background">@drawable/bg_button_primary</item>
