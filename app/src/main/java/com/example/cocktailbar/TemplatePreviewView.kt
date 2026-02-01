@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.graphics.Typeface
+import com.example.cocktailbar.util.FontManager
 
 
 class TemplatePreviewView @JvmOverloads constructor(
@@ -59,6 +60,7 @@ class TemplatePreviewView @JvmOverloads constructor(
         }
 
     private var currentTypeface: Typeface = Typeface.DEFAULT
+    private var appContext: Context? = null
 
     // Drinks data
     var drinks: List<Drink> = emptyList()
@@ -166,19 +168,20 @@ class TemplatePreviewView @JvmOverloads constructor(
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        appContext = context
+        updateTypeface()
+    }
+
     private fun updateTypeface() {
-        currentTypeface = when (drinksFont) {
-            "serif" -> Typeface.SERIF
-            "sans-serif" -> Typeface.SANS_SERIF
-            "monospace" -> Typeface.MONOSPACE
-            "cursive" -> Typeface.create("cursive", Typeface.NORMAL)
-            "casual" -> Typeface.create("casual", Typeface.NORMAL)
-            else -> Typeface.DEFAULT
+        appContext?.let { ctx ->
+            currentTypeface = FontManager.getTypeface(ctx, drinksFont)
+            drinkNamePaint.typeface = currentTypeface
+            drinkPricePaint.typeface = currentTypeface
+            drinkDescriptionPaint.typeface = currentTypeface
+            invalidate()
         }
-        drinkNamePaint.typeface = currentTypeface
-        drinkPricePaint.typeface = currentTypeface
-        drinkDescriptionPaint.typeface = currentTypeface
-        invalidate()
     }
 
     private fun drawBackground(canvas: Canvas) {

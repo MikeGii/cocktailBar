@@ -13,6 +13,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.example.cocktailbar.R
 import com.example.cocktailbar.TemplatePreviewView
+import com.example.cocktailbar.util.FontManager
 import com.example.cocktailbar.util.dp
 
 class DrinksSettingsDialog(
@@ -173,34 +174,41 @@ class DrinksSettingsDialog(
 
     private fun setupFontSelection(dialog: Dialog) {
         val fontContainer = dialog.findViewById<LinearLayout>(R.id.fontContainer)
+        val fontPickerDialog = FontPickerDialog(context)
+
+        // Create a button that shows current font and opens picker
         fontContainer.removeAllViews()
 
-        fonts.forEach { fontOption ->
-            val button = TextView(context).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    40.dp
-                ).apply {
-                    marginEnd = 8.dp
-                }
-                text = fontOption.displayName
-                typeface = fontOption.typeface
-                textSize = 14f
-                setPadding(16.dp, 8.dp, 16.dp, 8.dp)
-                gravity = android.view.Gravity.CENTER
+        val fontButton = TextView(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                48.dp
+            )
+            text = FontManager.getFontDisplayName(previewView.drinksFont)
+            typeface = FontManager.getTypeface(context, previewView.drinksFont)
+            textSize = 16f
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(16.dp, 0, 16.dp, 0)
+            background = createFontButtonBackground(false)
+            setTextColor(context.getColor(R.color.text_primary))
 
-                val isSelected = previewView.drinksFont == fontOption.id
-                background = createFontButtonBackground(isSelected)
-                setTextColor(if (isSelected) Color.WHITE else context.getColor(R.color.text_primary))
+            // Add dropdown arrow indicator
+            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_dropdown, 0)
+            compoundDrawablePadding = 8.dp
 
-                setOnClickListener {
-                    previewView.drinksFont = fontOption.id
+            setOnClickListener {
+                fontPickerDialog.show(previewView.drinksFont) { fontId ->
+                    previewView.drinksFont = fontId
                     previewView.invalidate()
-                    updateFontSelection(fontContainer, fontOption.id)
+
+                    // Update button text and font
+                    text = FontManager.getFontDisplayName(fontId)
+                    typeface = FontManager.getTypeface(context, fontId)
                 }
             }
-            fontContainer.addView(button)
         }
+
+        fontContainer.addView(fontButton)
     }
 
     private fun updateFontSelection(container: LinearLayout, selectedFontId: String) {
