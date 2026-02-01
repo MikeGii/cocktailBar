@@ -260,6 +260,7 @@ class TemplateDisplayActivity : AppCompatActivity() {
                 drinksNameColor = Color.parseColor(tmpl.drinksNameColor)
                 drinksPriceColor = Color.parseColor(tmpl.drinksPriceColor)
                 drinksDescriptionColor = Color.parseColor(tmpl.drinksDescriptionColor)
+                drinksFont = tmpl.drinksFont  // Add this line
                 drinks = tmpl.drinks
                 editMode = TemplatePreviewView.EditMode.NONE
             }

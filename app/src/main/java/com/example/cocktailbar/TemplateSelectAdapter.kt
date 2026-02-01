@@ -40,6 +40,7 @@ class TemplateSelectAdapter(
             binding.previewView.setLogoBitmap(null)
 
             // Apply template settings to preview view
+            // Apply template settings to preview view
             binding.previewView.apply {
                 backgroundScale = template.backgroundScale
                 backgroundOffsetX = template.backgroundOffsetX
@@ -57,6 +58,7 @@ class TemplateSelectAdapter(
                 drinksNameColor = Color.parseColor(template.drinksNameColor)
                 drinksPriceColor = Color.parseColor(template.drinksPriceColor)
                 drinksDescriptionColor = Color.parseColor(template.drinksDescriptionColor)
+                drinksFont = template.drinksFont  // Add this line
                 drinks = template.drinks
                 editMode = TemplatePreviewView.EditMode.NONE
 
