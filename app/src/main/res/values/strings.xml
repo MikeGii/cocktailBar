@@ -43,6 +43,12 @@
     <string name="description">Koostisosad</string>
     <string name="currency_format">%.2f €</string>
 
+    <!-- Variants -->
+    <string name="prices">Hinnad</string>
+    <string name="size_name">Suurus</string>
+    <string name="add_variant">+ Lisa hind</string>
+    <string name="at_least_one_price">Lisa vähemalt üks hind</string>
+
     <!-- Templates -->
     <string name="template_name">Malli nimi</string>
     <string name="select_background">Vali taustapilt</string>
@@ -52,6 +58,35 @@
     <string name="cancel">Tühista</string>
     <string name="delete">Kustuta</string>
     <string name="edit">Muuda</string>
+    <string name="add_template">Lisa mall</string>
+    <string name="edit_template">Muuda malli</string>
+    <string name="delete_template">Kustuta mall</string>
+    <string name="no_templates">Malle pole</string>
+    <string name="tap_to_select">Vajuta valimiseks</string>
+    <string name="select_drinks_count">Vali joogid (%d valitud)</string>
+    <string name="select_at_least_one_drink">Vali vähemalt üks jook</string>
+
+    <!-- Gallery -->
+    <string name="backgrounds">Taustapildid</string>
+    <string name="logos">Logod</string>
+    <string name="add_image">Lisa pilt</string>
+    <string name="delete_image">Kustuta pilt</string>
+    <string name="select_image">Vali pilt</string>
+    <string name="no_images">Pilte pole</string>
+    <string name="upload_success">Pilt üles laetud!</string>
+    <string name="upload_failed">Pildi üleslaadimine ebaõnnestus</string>
+
+    <!-- Visual Editor -->
+    <string name="hint_edit_background">Lohista ja näpista tausta muutmiseks</string>
+    <string name="hint_edit_logo">Lohista logo paigutamiseks, näpista suuruse muutmiseks</string>
+    <string name="hint_edit_drinks">Lohista ala liigutamiseks, lohista nurki suuruse muutmiseks</string>
+    <string name="drinks_selected_count">%d jooki valitud</string>
+    <string name="drinks_settings">Jookide seaded</string>
+    <string name="font_size">Fondi suurus</string>
+    <string name="columns">Veerud</string>
+    <string name="settings">Seaded</string>
+    <string name="logo">Logo</string>
+    <string name="background">Taust</string>
 
     <!-- Folders -->
     <string name="folder_name">Kausta nimi</string>

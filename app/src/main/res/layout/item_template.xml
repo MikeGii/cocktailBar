@@ -5,96 +5,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/spacing_md"
-    android:layout_marginVertical="@dimen/spacing_sm"
+    android:layout_margin="@dimen/spacing_sm"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/background_primary">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="@dimen/spacing_md">
 
-        <!-- Top Row: Name and Price -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+        <!-- Background Preview -->
+        <ImageView
+            android:id="@+id/ivBackground"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_image_placeholder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_launcher_background" />
 
-            <!-- Drink Name -->
-            <TextView
-                android:id="@+id/tvDrinkName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:ellipsize="end"
-                android:maxLines="2"
-                tools:text="Mojito" />
+        <!-- Logo Preview -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_image_placeholder"
+            app:layout_constraintStart_toEndOf="@id/ivBackground"
+            app:layout_constraintTop_toTopOf="@id/ivBackground"
+            app:layout_constraintBottom_toBottomOf="@id/ivBackground" />
 
-            <!-- Price Badge -->
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
-                android:paddingHorizontal="@dimen/spacing_md"
-                android:paddingVertical="@dimen/spacing_xs"
-                android:background="@drawable/bg_price_badge"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/orange_primary"
-                android:maxWidth="120dp"
-                android:gravity="center"
-                tools:text="8.50 - 12.00 €" />
-
-        </LinearLayout>
-
-        <!-- Description/Ingredients -->
+        <!-- Template Name -->
         <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
+            android:id="@+id/tvTemplateName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary"
-            android:lineSpacingExtra="2dp"
-            android:maxLines="3"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:maxLines="2"
             android:ellipsize="end"
-            tools:text="Valge rumm, laim, münt, suhkur, sooda" />
+            app:layout_constraintStart_toEndOf="@id/ivLogo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivBackground"
+            app:layout_constraintBottom_toBottomOf="@id/ivBackground"
+            tools:text="Malli nimi" />
 
-        <!-- Variants Detail -->
-        <TextView
-            android:id="@+id/tvVariants"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textSize="13sp"
-            android:textColor="@color/orange_primary"
-            android:visibility="gone"
-            tools:text="Väike: 6.00 € • Suur: 9.00 €" />
-
-        <!-- Divider -->
         <View
+            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/spacing_md"
-            android:background="@color/border_light" />
+            android:background="@color/border_light"
+            app:layout_constraintTop_toBottomOf="@id/ivBackground" />
 
-        <!-- Bottom Row: Action Buttons -->
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm"
             android:orientation="horizontal"
-            android:gravity="end">
+            android:gravity="end"
+            app:layout_constraintTop_toBottomOf="@id/divider">
 
-            <!-- Edit Button -->
             <LinearLayout
                 android:id="@+id/btnEdit"
                 android:layout_width="wrap_content"
@@ -107,8 +84,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_edit"
-                    android:contentDescription="@string/edit" />
+                    android:src="@drawable/ic_edit" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -120,12 +96,10 @@
 
             </LinearLayout>
 
-            <!-- Spacer -->
             <View
                 android:layout_width="@dimen/spacing_lg"
                 android:layout_height="1dp" />
 
-            <!-- Delete Button -->
             <LinearLayout
                 android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
@@ -138,8 +112,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_delete"
-                    android:contentDescription="@string/delete" />
+                    android:src="@drawable/ic_delete" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -153,6 +126,6 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

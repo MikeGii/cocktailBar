@@ -5,9 +5,12 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -68,13 +71,8 @@ class DrinksActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
-
-        binding.fabAdd.setOnClickListener {
-            showDrinkDialog(null)
-        }
+        binding.btnBack.setOnClickListener { finish() }
+        binding.fabAdd.setOnClickListener { showDrinkDialog(null) }
     }
 
     private fun loadDrinks() {
@@ -82,13 +80,28 @@ class DrinksActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val result = SupabaseClient.client
+                // Load drinks
+                val drinksResult = SupabaseClient.client
                     .from("drinks")
                     .select()
                     .decodeList<Drink>()
 
+                // Load all variants
+                val variantsResult = SupabaseClient.client
+                    .from("drink_variants")
+                    .select()
+                    .decodeList<DrinkVariant>()
+
+                // Group variants by drink_id
+                val variantsByDrink = variantsResult.groupBy { it.drinkId }
+
+                // Assign variants to drinks
                 drinks.clear()
-                drinks.addAll(result)
+                drinks.addAll(drinksResult.map { drink ->
+                    drink.copy().apply {
+                        variants = variantsByDrink[drink.id]?.sortedBy { it.sortOrder ?: 0 } ?: emptyList()
+                    }
+                })
 
                 runOnUiThread {
                     adapter.updateDrinks(drinks)
@@ -113,36 +126,84 @@ class DrinksActivity : AppCompatActivity() {
 
         val tvTitle = dialog.findViewById<TextView>(R.id.tvDialogTitle)
         val etName = dialog.findViewById<TextInputEditText>(R.id.etDrinkName)
-        val etPrice = dialog.findViewById<TextInputEditText>(R.id.etPrice)
         val etDescription = dialog.findViewById<TextInputEditText>(R.id.etDescription)
+        val variantsContainer = dialog.findViewById<LinearLayout>(R.id.variantsContainer)
+        val btnAddVariant = dialog.findViewById<TextView>(R.id.btnAddVariant)
         val tvError = dialog.findViewById<TextView>(R.id.tvError)
         val btnSave = dialog.findViewById<Button>(R.id.btnSave)
         val btnCancel = dialog.findViewById<TextView>(R.id.btnCancel)
+
+        // Track variant views
+        val variantViews = mutableListOf<View>()
+
+        fun addVariantRow(variant: DrinkVariant? = null) {
+            val variantView = LayoutInflater.from(this)
+                .inflate(R.layout.item_variant_edit, variantsContainer, false)
+
+            val etSizeName = variantView.findViewById<EditText>(R.id.etSizeName)
+            val etPrice = variantView.findViewById<EditText>(R.id.etPrice)
+            val btnRemove = variantView.findViewById<View>(R.id.btnRemove)
+
+            variant?.let {
+                etSizeName.setText(it.sizeName)
+                etPrice.setText(String.format("%.2f", it.price))
+            }
+
+            btnRemove.setOnClickListener {
+                variantsContainer.removeView(variantView)
+                variantViews.remove(variantView)
+            }
+
+            variantsContainer.addView(variantView)
+            variantViews.add(variantView)
+        }
 
         // Set title and prefill data if editing
         if (drink != null) {
             tvTitle.text = getString(R.string.edit_drink)
             etName.setText(drink.name)
-            etPrice.setText(String.format("%.2f", drink.price))
             etDescription.setText(drink.description ?: "")
+
+            // Add existing variants
+            drink.variants.forEach { addVariantRow(it) }
         } else {
             tvTitle.text = getString(R.string.add_drink)
+            // Add one empty variant by default
+            addVariantRow()
         }
+
+        btnAddVariant.setOnClickListener { addVariantRow() }
 
         btnSave.setOnClickListener {
             val name = etName.text.toString().trim()
-            val priceText = etPrice.text.toString().trim()
             val description = etDescription.text.toString().trim()
 
-            if (name.isEmpty() || priceText.isEmpty()) {
+            if (name.isEmpty()) {
                 tvError.text = getString(R.string.error)
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
 
-            val price = priceText.replace(",", ".").toDoubleOrNull()
-            if (price == null) {
-                tvError.text = getString(R.string.error)
+            // Collect variants
+            val variants = mutableListOf<DrinkVariant>()
+            for ((index, view) in variantViews.withIndex()) {
+                val sizeName = view.findViewById<EditText>(R.id.etSizeName).text.toString().trim()
+                val priceText = view.findViewById<EditText>(R.id.etPrice).text.toString().trim()
+
+                if (sizeName.isNotEmpty() && priceText.isNotEmpty()) {
+                    val price = priceText.replace(",", ".").toDoubleOrNull()
+                    if (price != null) {
+                        variants.add(DrinkVariant(
+                            sizeName = sizeName,
+                            price = price,
+                            sortOrder = index
+                        ))
+                    }
+                }
+            }
+
+            if (variants.isEmpty()) {
+                tvError.text = getString(R.string.at_least_one_price)
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
@@ -151,19 +212,16 @@ class DrinksActivity : AppCompatActivity() {
             tvError.visibility = View.GONE
 
             if (drink != null) {
-                updateDrink(drink.id, name, price, description, dialog)
+                updateDrink(drink.id, name, description, variants, dialog)
             } else {
-                addDrink(name, price, description, dialog)
+                addDrink(name, description, variants, dialog)
             }
         }
 
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
+        btnCancel.setOnClickListener { dialog.dismiss() }
 
         dialog.show()
 
-        // Set dialog width
         val window = dialog.window
         if (window != null) {
             val displayMetrics = resources.displayMetrics
@@ -172,18 +230,36 @@ class DrinksActivity : AppCompatActivity() {
         }
     }
 
-    private fun addDrink(name: String, price: Double, description: String, dialog: Dialog) {
+    private fun addDrink(name: String, description: String, variants: List<DrinkVariant>, dialog: Dialog) {
         lifecycleScope.launch {
             try {
-                val newDrink = Drink(
+                // Insert drink first
+                val newDrink = DrinkRequest(
                     name = name,
-                    price = price,
                     description = description.ifEmpty { null }
                 )
 
-                SupabaseClient.client
+                val insertedDrinks = SupabaseClient.client
                     .from("drinks")
-                    .insert(newDrink)
+                    .insert(newDrink) { select() }
+                    .decodeList<Drink>()
+
+                val drinkId = insertedDrinks.firstOrNull()?.id
+                    ?: throw Exception("Failed to get drink ID")
+
+                // Insert variants
+                val variantsToInsert = variants.map { variant ->
+                    DrinkVariantRequest(
+                        drinkId = drinkId,
+                        sizeName = variant.sizeName,
+                        price = variant.price,
+                        sortOrder = variant.sortOrder ?: 0
+                    )
+                }
+
+                SupabaseClient.client
+                    .from("drink_variants")
+                    .insert(variantsToInsert)
 
                 runOnUiThread {
                     dialog.dismiss()
@@ -202,23 +278,41 @@ class DrinksActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateDrink(id: String, name: String, price: Double, description: String, dialog: Dialog) {
+    private fun updateDrink(id: String, name: String, description: String, variants: List<DrinkVariant>, dialog: Dialog) {
         lifecycleScope.launch {
             try {
-                val updatedDrink = Drink(
-                    id = id,
+                // Update drink
+                val updatedDrink = DrinkRequest(
                     name = name,
-                    price = price,
                     description = description.ifEmpty { null }
                 )
 
                 SupabaseClient.client
                     .from("drinks")
                     .update(updatedDrink) {
-                        filter {
-                            eq("id", id)
-                        }
+                        filter { eq("id", id) }
                     }
+
+                // Delete old variants
+                SupabaseClient.client
+                    .from("drink_variants")
+                    .delete {
+                        filter { eq("drink_id", id) }
+                    }
+
+                // Insert new variants
+                val variantsToInsert = variants.map { variant ->
+                    DrinkVariantRequest(
+                        drinkId = id,
+                        sizeName = variant.sizeName,
+                        price = variant.price,
+                        sortOrder = variant.sortOrder ?: 0
+                    )
+                }
+
+                SupabaseClient.client
+                    .from("drink_variants")
+                    .insert(variantsToInsert)
 
                 runOnUiThread {
                     dialog.dismiss()
@@ -241,9 +335,7 @@ class DrinksActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.delete_drink)
             .setMessage(R.string.confirm_delete)
-            .setPositiveButton(R.string.yes) { _, _ ->
-                deleteDrink(drink)
-            }
+            .setPositiveButton(R.string.yes) { _, _ -> deleteDrink(drink) }
             .setNegativeButton(R.string.no, null)
             .show()
     }
@@ -251,12 +343,11 @@ class DrinksActivity : AppCompatActivity() {
     private fun deleteDrink(drink: Drink) {
         lifecycleScope.launch {
             try {
+                // Variants will be deleted automatically due to ON DELETE CASCADE
                 SupabaseClient.client
                     .from("drinks")
                     .delete {
-                        filter {
-                            eq("id", drink.id)
-                        }
+                        filter { eq("id", drink.id) }
                     }
 
                 runOnUiThread {

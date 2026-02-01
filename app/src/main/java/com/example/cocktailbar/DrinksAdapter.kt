@@ -1,11 +1,10 @@
 package com.example.cocktailbar
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cocktailbar.databinding.ItemDrinkBinding
-import java.util.Locale
 
 class DrinksAdapter(
     private var drinks: List<Drink>,
@@ -20,14 +19,24 @@ class DrinksAdapter(
 
         fun bind(drink: Drink) {
             binding.tvDrinkName.text = drink.name
-            binding.tvPrice.text = String.format(Locale.getDefault(), "%.2f €", drink.price)
-            binding.tvDescription.text = drink.description ?: ""
+            binding.tvPrice.text = drink.getDisplayPrice()
 
-            // Hide description if empty
-            binding.tvDescription.visibility = if (drink.description.isNullOrEmpty()) {
-                android.view.View.GONE
+            // Description
+            if (drink.description.isNullOrEmpty()) {
+                binding.tvDescription.visibility = View.GONE
             } else {
-                android.view.View.VISIBLE
+                binding.tvDescription.visibility = View.VISIBLE
+                binding.tvDescription.text = drink.description
+            }
+
+            // Variants detail
+            if (drink.variants.size > 1) {
+                binding.tvVariants.visibility = View.VISIBLE
+                binding.tvVariants.text = drink.variants
+                    .sortedBy { it.sortOrder ?: 0 }
+                    .joinToString(" • ") { "${it.sizeName}: ${String.format("%.2f €", it.price)}" }
+            } else {
+                binding.tvVariants.visibility = View.GONE
             }
 
             binding.btnEdit.setOnClickListener { onEditClick(drink) }

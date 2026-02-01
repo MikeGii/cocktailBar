@@ -28,6 +28,22 @@
             android:name=".DrinksActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".GalleryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TemplatesActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TemplateEditorActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TemplateVisualEditorActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

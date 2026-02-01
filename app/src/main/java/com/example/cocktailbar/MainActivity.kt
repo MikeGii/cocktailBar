@@ -166,11 +166,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnTemplates.setOnClickListener {
-            Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, TemplatesActivity::class.java))
         }
 
         binding.btnGallery.setOnClickListener {
-            Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, GalleryActivity::class.java))
         }
 
         binding.btnLogout.setOnClickListener {
