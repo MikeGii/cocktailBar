@@ -1,9 +1,10 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.ui.drinks
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cocktailbar.data.model.Drink
 import com.example.cocktailbar.databinding.ItemDrinkBinding
 
 class DrinksAdapter(

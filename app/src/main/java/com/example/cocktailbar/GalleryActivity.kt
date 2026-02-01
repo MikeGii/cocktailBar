@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.cocktailbar.data.model.GalleryImage
 import com.example.cocktailbar.databinding.ActivityGalleryBinding
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.launch

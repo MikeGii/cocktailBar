@@ -3,6 +3,7 @@ package com.example.cocktailbar
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cocktailbar.data.model.Drink
 import com.example.cocktailbar.databinding.ItemDrinkSelectableBinding
 
 class SelectableDrinksAdapter(

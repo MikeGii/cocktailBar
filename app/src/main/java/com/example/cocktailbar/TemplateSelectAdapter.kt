@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cocktailbar.data.model.Template
 import com.example.cocktailbar.databinding.ItemTemplateSelectBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

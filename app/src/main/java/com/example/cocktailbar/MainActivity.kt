@@ -22,6 +22,7 @@ import com.google.android.material.textfield.TextInputEditText
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 import android.content.Intent
+import com.example.cocktailbar.data.model.Admin
 
 class MainActivity : AppCompatActivity() {
 

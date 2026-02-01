@@ -25,7 +25,7 @@
         </activity>
 
         <activity
-            android:name=".DrinksActivity"
+            android:name=".ui.drinks.DrinksActivity"
             android:exported="false" />
 
         <activity

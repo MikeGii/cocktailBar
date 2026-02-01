@@ -10,6 +10,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.cocktailbar.data.model.Drink
+import com.example.cocktailbar.data.model.DrinkVariant
+import com.example.cocktailbar.data.model.Template
+import com.example.cocktailbar.data.model.TemplateDrink
+import com.example.cocktailbar.data.model.TemplateDrinkRequest
+import com.example.cocktailbar.data.model.TemplateRequest
 import com.example.cocktailbar.databinding.ActivityTemplateVisualEditorBinding
 import com.example.cocktailbar.dialog.DrinksSelectionDialog
 import com.example.cocktailbar.dialog.DrinksSettingsDialog
@@ -291,7 +297,10 @@ class TemplateVisualEditorActivity : AppCompatActivity() {
             drinksDescriptionFontSize = preview.drinksDescriptionFontSize,
             drinksNameColor = String.format("#%06X", 0xFFFFFF and preview.drinksNameColor),
             drinksPriceColor = String.format("#%06X", 0xFFFFFF and preview.drinksPriceColor),
-            drinksDescriptionColor = String.format("#%06X", 0xFFFFFF and preview.drinksDescriptionColor),
+            drinksDescriptionColor = String.format(
+                "#%06X",
+                0xFFFFFF and preview.drinksDescriptionColor
+            ),
             drinksFont = preview.drinksFont
         )
 

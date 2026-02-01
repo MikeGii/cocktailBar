@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.example.cocktailbar.data.model.GalleryImage
 import com.example.cocktailbar.databinding.ItemGalleryImageBinding
 
 class GalleryAdapter(

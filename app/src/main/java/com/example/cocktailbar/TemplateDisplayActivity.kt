@@ -18,6 +18,10 @@ import com.example.cocktailbar.databinding.ActivityTemplateDisplayBinding
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 import android.graphics.Color
+import com.example.cocktailbar.data.model.Drink
+import com.example.cocktailbar.data.model.DrinkVariant
+import com.example.cocktailbar.data.model.Template
+import com.example.cocktailbar.data.model.TemplateDrink
 
 class TemplateDisplayActivity : AppCompatActivity() {
 

@@ -1,5 +1,6 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.data.model
 
+import com.example.cocktailbar.data.model.DrinkVariant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

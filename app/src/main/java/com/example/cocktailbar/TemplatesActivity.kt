@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cocktailbar.data.model.Template
 import com.example.cocktailbar.databinding.ActivityTemplatesBinding
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch

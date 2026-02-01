@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.view.Window
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.cocktailbar.Drink
+import com.example.cocktailbar.data.model.Drink
 import com.example.cocktailbar.R
 import com.example.cocktailbar.SelectableDrinksAdapter
 import com.example.cocktailbar.databinding.DialogImagePickerBinding

@@ -14,6 +14,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.example.cocktailbar.data.model.Drink
+import com.example.cocktailbar.data.model.DrinkVariant
+import com.example.cocktailbar.data.model.Template
+import com.example.cocktailbar.data.model.TemplateDrink
+import com.example.cocktailbar.data.model.TemplateDrinkRequest
+import com.example.cocktailbar.data.model.TemplateRequest
 import com.example.cocktailbar.databinding.ActivityTemplateEditorBinding
 import com.example.cocktailbar.databinding.DialogImagePickerBinding
 import io.github.jan.supabase.postgrest.from

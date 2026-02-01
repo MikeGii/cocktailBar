@@ -15,6 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.example.cocktailbar.data.model.Drink
+import com.example.cocktailbar.data.model.DrinkVariant
+import com.example.cocktailbar.data.model.Template
+import com.example.cocktailbar.data.model.TemplateDrink
 import com.example.cocktailbar.databinding.ActivityTemplateSelectBinding
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers

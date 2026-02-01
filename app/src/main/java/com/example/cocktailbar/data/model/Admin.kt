@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package com.example.cocktailbar.data.model
 
 import kotlinx.serialization.Serializable
 
