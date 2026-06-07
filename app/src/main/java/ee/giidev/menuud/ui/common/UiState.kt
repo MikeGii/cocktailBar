@@ -1,4 +1,4 @@
-package com.example.cocktailbar.ui.common
+package ee.giidev.menuud.ui.common
 
 sealed class UiState<out T> {
     object Loading : UiState<Nothing>()

@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package ee.giidev.menuud
 
 import org.junit.Test
 

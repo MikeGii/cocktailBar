@@ -13,11 +13,11 @@ if (localPropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.cocktailbar"
+    namespace = "ee.giidev.menuud"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.cocktailbar"
+        applicationId = "ee.giidev.menuud"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

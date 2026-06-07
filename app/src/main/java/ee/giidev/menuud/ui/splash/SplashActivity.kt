@@ -1,12 +1,12 @@
-package com.example.cocktailbar.ui.splash
+package ee.giidev.menuud.ui.splash
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.cocktailbar.R
-import com.example.cocktailbar.ui.gallery.GalleryActivity
+import ee.giidev.menuud.R
+import ee.giidev.menuud.ui.gallery.GalleryActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

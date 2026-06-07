@@ -1,4 +1,4 @@
-package com.example.cocktailbar.ui.display
+package ee.giidev.menuud.ui.display
 
 import android.app.ActivityManager
 import android.content.Context
@@ -14,8 +14,8 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import coil.load
-import com.example.cocktailbar.R
-import com.example.cocktailbar.databinding.ActivityDisplayBinding
+import ee.giidev.menuud.R
+import ee.giidev.menuud.databinding.ActivityDisplayBinding
 
 /**
  * Shows a single image full-screen and can "lock" the screen for unattended

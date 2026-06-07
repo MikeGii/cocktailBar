@@ -1,4 +1,4 @@
-package com.example.cocktailbar.ui.gallery
+package ee.giidev.menuud.ui.gallery
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -22,11 +22,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.cocktailbar.R
-import com.example.cocktailbar.data.model.GalleryImage
-import com.example.cocktailbar.databinding.ActivityGalleryBinding
-import com.example.cocktailbar.ui.common.UiState
-import com.example.cocktailbar.ui.display.DisplayActivity
+import ee.giidev.menuud.R
+import ee.giidev.menuud.data.model.GalleryImage
+import ee.giidev.menuud.databinding.ActivityGalleryBinding
+import ee.giidev.menuud.ui.common.UiState
+import ee.giidev.menuud.ui.display.DisplayActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID

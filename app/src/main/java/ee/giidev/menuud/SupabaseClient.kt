@@ -1,4 +1,4 @@
-package com.example.cocktailbar
+package ee.giidev.menuud
 
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.storage.Storage

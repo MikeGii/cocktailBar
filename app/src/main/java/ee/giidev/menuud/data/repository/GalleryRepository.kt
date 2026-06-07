@@ -1,7 +1,7 @@
-package com.example.cocktailbar.data.repository
+package ee.giidev.menuud.data.repository
 
-import com.example.cocktailbar.data.model.GalleryImage
-import com.example.cocktailbar.data.remote.SupabaseDataSource
+import ee.giidev.menuud.data.model.GalleryImage
+import ee.giidev.menuud.data.remote.SupabaseDataSource
 
 class GalleryRepository(
     private val dataSource: SupabaseDataSource = SupabaseDataSource()

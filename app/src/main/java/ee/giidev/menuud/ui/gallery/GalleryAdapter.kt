@@ -1,13 +1,13 @@
-package com.example.cocktailbar.ui.gallery
+package ee.giidev.menuud.ui.gallery
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
-import com.example.cocktailbar.R
-import com.example.cocktailbar.data.model.GalleryImage
-import com.example.cocktailbar.databinding.ItemGalleryImageBinding
+import ee.giidev.menuud.R
+import ee.giidev.menuud.data.model.GalleryImage
+import ee.giidev.menuud.databinding.ItemGalleryImageBinding
 
 class GalleryAdapter(
     private var images: List<GalleryImage>,

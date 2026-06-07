@@ -1,6 +1,6 @@
-package com.example.cocktailbar.data.remote
+package ee.giidev.menuud.data.remote
 
-import com.example.cocktailbar.SupabaseClient
+import ee.giidev.menuud.SupabaseClient
 import io.github.jan.supabase.storage.storage
 
 /**

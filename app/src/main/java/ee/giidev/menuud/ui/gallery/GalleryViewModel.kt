@@ -1,12 +1,12 @@
-package com.example.cocktailbar.ui.gallery
+package ee.giidev.menuud.ui.gallery
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.cocktailbar.R
-import com.example.cocktailbar.data.model.GalleryImage
-import com.example.cocktailbar.data.repository.GalleryRepository
-import com.example.cocktailbar.ui.common.UiState
+import ee.giidev.menuud.R
+import ee.giidev.menuud.data.model.GalleryImage
+import ee.giidev.menuud.data.repository.GalleryRepository
+import ee.giidev.menuud.ui.common.UiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
