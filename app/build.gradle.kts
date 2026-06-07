@@ -29,9 +29,25 @@ android {
         buildConfigField("String", "SUPABASE_KEY", "\"${localProperties.getProperty("SUPABASE_KEY", "")}\"")
     }
 
+    signingConfigs {
+        create("release") {
+            // Keystore + passwords come from local.properties (git-ignored), not VCS.
+            val keystoreFile = rootProject.file(
+                localProperties.getProperty("RELEASE_STORE_FILE", "menuud-release.jks")
+            )
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = localProperties.getProperty("RELEASE_STORE_PASSWORD", "")
+                keyAlias = localProperties.getProperty("RELEASE_KEY_ALIAS", "")
+                keyPassword = localProperties.getProperty("RELEASE_KEY_PASSWORD", "")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
