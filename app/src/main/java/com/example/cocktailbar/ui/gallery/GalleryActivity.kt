@@ -2,7 +2,12 @@ package com.example.cocktailbar.ui.gallery
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -21,14 +26,23 @@ import com.example.cocktailbar.R
 import com.example.cocktailbar.data.model.GalleryImage
 import com.example.cocktailbar.databinding.ActivityGalleryBinding
 import com.example.cocktailbar.ui.common.UiState
+import com.example.cocktailbar.ui.display.DisplayActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * Home screen: a grid of images synced from Supabase Storage. Tap an image to
+ * display it full-screen and lock the device; use the FAB to add an image from
+ * the device (including Google Drive via the system picker).
+ */
 class GalleryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGalleryBinding
     private lateinit var adapter: GalleryAdapter
+
+    private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private val viewModel: GalleryViewModel by viewModels { GalleryViewModel.Factory() }
 
@@ -36,9 +50,7 @@ class GalleryActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let { uri ->
-                uploadImage(uri)
-            }
+            result.data?.data?.let { uri -> uploadImage(uri) }
         }
     }
 
@@ -56,36 +68,34 @@ class GalleryActivity : AppCompatActivity() {
         }
 
         setupRecyclerView()
-        setupTabs()
         setupButtons()
+        setupNetworkMonitoring()
         observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        registerNetworkCallback()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterNetworkCallback()
     }
 
     private fun setupRecyclerView() {
         adapter = GalleryAdapter(
             images = emptyList(),
+            onImageClick = { image -> openDisplay(image) },
             onDeleteClick = { image -> showDeleteConfirmation(image) }
         )
         binding.rvImages.layoutManager = GridLayoutManager(this, 2)
         binding.rvImages.adapter = adapter
     }
 
-    private fun setupTabs() {
-        binding.tabBackgrounds.setOnClickListener {
-            viewModel.switchBucket(GalleryViewModel.BUCKET_BACKGROUNDS)
-        }
-
-        binding.tabLogos.setOnClickListener {
-            viewModel.switchBucket(GalleryViewModel.BUCKET_LOGOS)
-        }
-    }
-
     private fun setupButtons() {
-        binding.btnBack.setOnClickListener { finish() }
-
-        binding.fabAdd.setOnClickListener {
-            openImagePicker()
-        }
+        binding.btnSyncData.setOnClickListener { viewModel.syncData() }
+        binding.fabAdd.setOnClickListener { openImagePicker() }
     }
 
     private fun observeViewModel() {
@@ -114,8 +124,10 @@ class GalleryActivity : AppCompatActivity() {
                 }
 
                 launch {
-                    viewModel.currentBucket.collect { bucket ->
-                        updateTabSelection(bucket == GalleryViewModel.BUCKET_BACKGROUNDS)
+                    viewModel.isConnected.collect { connected ->
+                        binding.connectionIndicator.setImageResource(
+                            if (connected) R.drawable.ic_connected else R.drawable.ic_disconnected
+                        )
                     }
                 }
 
@@ -128,24 +140,56 @@ class GalleryActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateTabSelection(isBackgrounds: Boolean) {
-        binding.tabBackgrounds.setBackgroundResource(
-            if (isBackgrounds) R.drawable.bg_tab_selected else R.drawable.bg_tab_unselected
-        )
-        binding.tabBackgrounds.setTextColor(
-            getColor(if (isBackgrounds) R.color.text_on_orange else R.color.orange_primary)
-        )
+    // region Network monitoring
 
-        binding.tabLogos.setBackgroundResource(
-            if (!isBackgrounds) R.drawable.bg_tab_selected else R.drawable.bg_tab_unselected
-        )
-        binding.tabLogos.setTextColor(
-            getColor(if (!isBackgrounds) R.color.text_on_orange else R.color.orange_primary)
-        )
+    private fun setupNetworkMonitoring() {
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        binding.tvTitle.text = getString(
-            if (isBackgrounds) R.string.backgrounds else R.string.logos
-        )
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                viewModel.checkConnection()
+            }
+
+            override fun onLost(network: Network) {
+                viewModel.setConnected(false)
+            }
+
+            override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+                if (capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                    viewModel.checkConnection()
+                } else {
+                    viewModel.setConnected(false)
+                }
+            }
+        }
+    }
+
+    private fun registerNetworkCallback() {
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        try {
+            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun unregisterNetworkCallback() {
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    // endregion
+
+    private fun openDisplay(image: GalleryImage) {
+        val intent = Intent(this, DisplayActivity::class.java).apply {
+            putExtra(DisplayActivity.EXTRA_IMAGE_URL, image.url)
+        }
+        startActivity(intent)
     }
 
     private fun openImagePicker() {
@@ -158,11 +202,8 @@ class GalleryActivity : AppCompatActivity() {
 
     private fun uploadImage(uri: Uri) {
         try {
-            val inputStream = contentResolver.openInputStream(uri)
+            val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() }
                 ?: throw Exception("Cannot read file")
-
-            val bytes = inputStream.readBytes()
-            inputStream.close()
 
             val extension = getFileExtension(uri)
             val fileName = "${UUID.randomUUID()}.$extension"
@@ -175,9 +216,7 @@ class GalleryActivity : AppCompatActivity() {
     }
 
     private fun getFileExtension(uri: Uri): String {
-        val mimeType = contentResolver.getType(uri)
-        return when (mimeType) {
-            "image/jpeg" -> "jpg"
+        return when (contentResolver.getType(uri)) {
             "image/png" -> "png"
             "image/gif" -> "gif"
             "image/webp" -> "webp"
@@ -200,7 +239,7 @@ class GalleryActivity : AppCompatActivity() {
     }
 
     private fun updateEmptyState(isEmpty: Boolean) {
-        binding.tvEmpty.visibility = if (isEmpty && binding.progressBar.visibility != View.VISIBLE)
-            View.VISIBLE else View.GONE
+        binding.tvEmpty.visibility =
+            if (isEmpty && binding.progressBar.visibility != View.VISIBLE) View.VISIBLE else View.GONE
     }
 }

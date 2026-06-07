@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="@color/black">
 
-    <!-- Template Preview (Full Screen) -->
-    <com.example.cocktailbar.TemplatePreviewView
-        android:id="@+id/previewView"
+    <!-- Displayed image (full screen) -->
+    <ImageView
+        android:id="@+id/ivImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/app_name" />
 
-    <!-- Top Bar (hidden when locked) -->
+    <!-- Top bar (hidden when locked) -->
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -31,28 +32,9 @@
             android:scaleType="centerInside"
             android:contentDescription="@string/cancel" />
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="@dimen/spacing_md"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:shadowColor="#80000000"
-            android:shadowRadius="4"
-            android:shadowDx="1"
-            android:shadowDy="1" />
-
-        <View
-            android:layout_width="@dimen/icon_button_size"
-            android:layout_height="@dimen/icon_button_size" />
-
     </LinearLayout>
 
-    <!-- Lock Button (bottom, hidden when locked) -->
+    <!-- Lock button (hidden when locked) -->
     <Button
         android:id="@+id/btnLock"
         style="@style/Widget.CocktailBar.Button.Primary"
@@ -64,7 +46,7 @@
         android:text="@string/lock_screen"
         android:textColor="@color/white" />
 
-    <!-- Unlock Button (hidden, appears on triple tap) -->
+    <!-- Unlock button (appears on triple tap while locked) -->
     <ImageButton
         android:id="@+id/btnUnlock"
         android:layout_width="48dp"
@@ -74,16 +56,8 @@
         android:background="@drawable/bg_button_circle_dark"
         android:src="@drawable/ic_unlock"
         android:scaleType="centerInside"
-        android:alpha="0.7"
+        android:alpha="0.85"
         android:visibility="gone"
         android:contentDescription="@string/unlock" />
-
-    <!-- Loading -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
 
 </FrameLayout>

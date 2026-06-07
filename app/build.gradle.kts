@@ -3,7 +3,6 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
 }
 
 // Load Supabase credentials from local.properties
@@ -65,20 +64,13 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Supabase
+    // Supabase (Storage only)
     implementation(platform(libs.supabase.bom))
-    implementation(libs.supabase.postgrest)
     implementation(libs.supabase.storage)
-    implementation(libs.supabase.auth)
 
     // Ktor
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
-
-    // Room
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
 
     // Coroutines
     implementation(libs.coroutines.android)

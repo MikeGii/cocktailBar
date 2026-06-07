@@ -36,4 +36,12 @@ class GalleryRepository(
             dataSource.deleteFile(bucket, fileName)
         }
     }
+
+    suspend fun checkConnection(bucket: String): Boolean {
+        return try {
+            dataSource.pingConnection(bucket)
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

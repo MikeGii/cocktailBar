@@ -5,10 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.cocktailbar.MainActivity
 import com.example.cocktailbar.R
-import com.example.cocktailbar.SupabaseClient
-import io.github.jan.supabase.postgrest.from
+import com.example.cocktailbar.ui.gallery.GalleryActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -19,34 +17,20 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        initializeApp()
-    }
-
-    private fun initializeApp() {
         lifecycleScope.launch {
-            val minSplashTime = 1500L
-            val startTime = System.currentTimeMillis()
-
-            try {
-                SupabaseClient.client.from("admin").select { limit(1) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            val elapsed = System.currentTimeMillis() - startTime
-            if (elapsed < minSplashTime) {
-                delay(minSplashTime - elapsed)
-            }
-
-            navigateToMain()
+            delay(SPLASH_DURATION_MS)
+            navigateToHome()
         }
     }
 
-    private fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+    private fun navigateToHome() {
+        startActivity(Intent(this, GalleryActivity::class.java))
         finish()
-
+        @Suppress("DEPRECATION")
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    companion object {
+        private const val SPLASH_DURATION_MS = 1200L
     }
 }

@@ -11,6 +11,7 @@ import com.example.cocktailbar.databinding.ItemGalleryImageBinding
 
 class GalleryAdapter(
     private var images: List<GalleryImage>,
+    private val onImageClick: (GalleryImage) -> Unit,
     private val onDeleteClick: (GalleryImage) -> Unit
 ) : RecyclerView.Adapter<GalleryAdapter.ImageViewHolder>() {
 
@@ -27,6 +28,7 @@ class GalleryAdapter(
 
             binding.tvFileName.text = image.name
 
+            binding.root.setOnClickListener { onImageClick(image) }
             binding.btnDelete.setOnClickListener { onDeleteClick(image) }
         }
     }

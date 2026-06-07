@@ -13,7 +13,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CocktailBar">
+        android:theme="@style/Theme.CocktailBar"
+        tools:targetApi="31">
 
         <!-- Splash Screen (Launcher) -->
         <activity
@@ -26,36 +27,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Main -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-
-        <!-- Drinks -->
-        <activity
-            android:name=".ui.drinks.DrinksActivity"
-            android:exported="false" />
-
-        <!-- Gallery -->
+        <!-- Home: synced image grid -->
         <activity
             android:name=".ui.gallery.GalleryActivity"
             android:exported="false" />
 
-        <!-- Templates -->
+        <!-- Full-screen image display + lock -->
         <activity
-            android:name=".ui.templates.TemplatesActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.templates.TemplateVisualEditorActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.templates.TemplateSelectActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.templates.TemplateDisplayActivity"
+            android:name=".ui.display.DisplayActivity"
             android:exported="false"
             android:theme="@style/Theme.CocktailBar.Fullscreen" />
 
