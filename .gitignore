@@ -17,3 +17,6 @@ local.properties
 # Signing keystores — never commit (back these up outside the repo)
 *.jks
 *.keystore
+
+# Claude Code session worktrees — nested copies confuse the IDE indexer
+/.claude/worktrees/
